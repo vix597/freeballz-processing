@@ -1,23 +1,16 @@
 /*
-*
-* Game: Open Source Balls
-* Written By: Sean LaPlante
-* Version: 0.0.1
-*
-*/
+ * os-balls.pde
+ *
+ * Main game file. Calls the required Processing methods: setup and draw.
+ *
+ *  Created on: December 23, 2019
+ *      Author: Sean LaPlante
+ */
 
-import android.util.DisplayMetrics;         //Get Screen DPI
-import android.view.MotionEvent;            //Allow the override of surfaceTouchEvent
-import android.view.KeyEvent;               //handle key pressed (home, back, etc...)
-import apwidgets.*;
 
-//******Keep the screen on********
-import android.view.WindowManager;
-import android.view.View;
-import android.os.Bundle;
-//********************************
 
-void setup(){
+
+void setup() {
     //******Get Screen DPI********
     DisplayMetrics dm = new DisplayMetrics();
     getWindowManager().getDefaultDisplay().getMetrics(dm);
