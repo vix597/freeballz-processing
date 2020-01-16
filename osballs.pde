@@ -54,7 +54,6 @@ void mousePressed() {
     /*
      * Called when the mouse button is pressed
      */
-    
     switch(currentState) {
     case START_SCREEN:
         startScreen.handleInput(InputType.TOUCH_START);
@@ -71,7 +70,6 @@ void mouseReleased() {
     /*
      * Called when the mouse button is released
      */
-     
     switch(currentState) {
     case START_SCREEN:
         startScreen.handleInput(InputType.TOUCH_END);

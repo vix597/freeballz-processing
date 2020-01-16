@@ -8,35 +8,19 @@
  */
 
 
-enum GameAction {
-    PREPARE_SHOT,
-    CHANGE_LEVEL,
-    EXECUTING_SHOT
-}
-
-
-enum GameActionState {
-    ACTION_START,
-    ACTION_ACTIVE,
-    ACTION_COMPLETE
-}
-
- 
 class MainGame {
     /*
      * This is where the main game logic exists
      */
+    public static final int shotSpeed = 7;
     
     private Hud hud;
     
-    private GameAction action;
-    private GameActionState actionState;
+    private Action action;
     
     // Game screen area
     public GameScreen screen;
 
-    private int launchY;
-    private PVector currentLaunchPoint;
     private Ball launchPointBall;
     
     private int level;
@@ -46,20 +30,22 @@ class MainGame {
     
     public ArrayList<Ball> balls;
     public ArrayList<Block> blocks;
+    public ArrayList<Block> deleteBlocks;
+    
+    private ArrayList<Line> lines;
     
     MainGame() {
         balls = new ArrayList<Ball>();
         blocks = new ArrayList<Block>();
-        action = GameAction.PREPARE_SHOT;
-        actionState = GameActionState.ACTION_START;
+        deleteBlocks = new ArrayList<Block>();
+        lines = new ArrayList<Line>();
+        action = null;
         
         loadGame();
         
         hud = new Hud(level, numBalls, score, coins);  
         screen = new GameScreen(0, width, hud.getTopLine(), hud.getBottomLine());  // left, right, top, bottom of play area
-        launchY = screen.bottom - 5;
-        currentLaunchPoint = new PVector(width / 2, launchY);  // Start out at the center
-        launchPointBall = new Ball(currentLaunchPoint);
+        launchPointBall = new Ball(screen.launchPoint);  // Pass in the PVector so that if the screen launchPoint is updated, so is this.
         
         generateBlocks();
     }
@@ -68,7 +54,7 @@ class MainGame {
         /*
          * Load the game state
          */
-        level = 1;
+        level = 100;
         numBalls = 1;
         score = 0;
         coins = 0;
@@ -110,9 +96,9 @@ class MainGame {
                 // The line is going off the left of the screen
                 newX = 0;
                 newY = b;
-            } else if (newX > width) {
+            } else if (newX > screen.right) {
                 // The line is going off the right of the screen
-                newX = width;
+                newX = screen.right;
                 newY = (m * newX) + b;
             }
             
@@ -149,9 +135,9 @@ class MainGame {
                 // The line is going off the left of the screen
                 newX = 0;
                 newY = b;
-            } else if (newX > width) {
+            } else if (newX > screen.right) {
                 // The line is going off the right of the screen
-                newX = width;
+                newX = screen.right;
                 newY = (m * newX) + b;
             }
             
@@ -159,17 +145,17 @@ class MainGame {
         }
     }
     
-    ArrayList<Line> _get_shot_lines(int num_lines) {
+    void _get_shot_lines(int num_lines) {
         /*
          * Draw the shot lines. num_lines determines
          * how many additional lines to draw after the
          * first. Returns the lines to be drawn.
          */
-
-        ArrayList<Line> lines = new ArrayList<Line>();   
+        lines.clear();
+         
         Line prevLine = new Line(
-            currentLaunchPoint,
-            _extend_line_up(currentLaunchPoint, new PVector(mouseX, mouseY))
+            screen.launchPoint,
+            _extend_line_up(screen.launchPoint, new PVector(mouseX, mouseY))
         );
             
         lines.add(prevLine);  // We always get at least 1 line.
@@ -185,10 +171,10 @@ class MainGame {
             
             if (prevLine.endPoint.y == screen.top) {  // Ends at the top boundary
                 PVector nextPoint;
-                if (prevLine.endPoint.x < (width / 2)) {
+                if (prevLine.endPoint.x < screen.middleX) {
                     nextPoint = new PVector(prevLine.endPoint.x - prevLine.run, prevLine.endPoint.y + prevLine.rise);
                 } else {
-                    nextPoint = new PVector(prevLine.endPoint.x + prevLine.run, prevLine.endPoint.y + prevLine.rise);
+                    nextPoint = new PVector(prevLine.endPoint.x - prevLine.run, prevLine.endPoint.y + prevLine.rise);
                 }
                 
                 prevLine = new Line(prevLine.endPoint, _extend_line_down(prevLine.endPoint, nextPoint));
@@ -196,24 +182,24 @@ class MainGame {
             } else if (prevLine.endPoint.x == 0) {
                 // Ends at the left boundary
                 PVector nextPoint, endPoint;
-                if (prevLine.startPoint.y > prevLine.endPoint.y) {
+                if (prevLine.up) {
                     // Line direction is "up" the screen
                     nextPoint = new PVector(prevLine.endPoint.x + prevLine.run, prevLine.endPoint.y - prevLine.rise);
                     endPoint = _extend_line_up(prevLine.endPoint, nextPoint);
                 } else {
                     // Line direction is "down" the screen
-                    nextPoint = new PVector(prevLine.endPoint.x + prevLine.run, prevLine.endPoint.y + prevLine.rise);
+                    nextPoint = new PVector(prevLine.endPoint.x + prevLine.run, prevLine.endPoint.y - prevLine.rise);
                     endPoint = _extend_line_down(prevLine.endPoint, nextPoint);
                 }
                 
                 prevLine = new Line(prevLine.endPoint, endPoint);
                 lines.add(prevLine);
-            } else if (prevLine.endPoint.x == width) {
+            } else if (prevLine.endPoint.x == screen.right) {
                 // Ends at the right boundary
                 PVector nextPoint, endPoint;
-                if (prevLine.startPoint.y > prevLine.endPoint.y) {
+                if (prevLine.up) {
                     // Line direction is "up" the screen
-                    nextPoint = new PVector(prevLine.endPoint.x - prevLine.run, prevLine.endPoint.y - prevLine.rise);
+                    nextPoint = new PVector(prevLine.endPoint.x - prevLine.run, prevLine.endPoint.y + prevLine.rise);
                     endPoint = _extend_line_up(prevLine.endPoint, nextPoint);
                 } else {
                     // Line direction is "down" the screen
@@ -225,8 +211,6 @@ class MainGame {
                 lines.add(prevLine);
             }
         }
-    
-        return lines;
     }
     
     int getBlockValue() {
@@ -261,7 +245,7 @@ class MainGame {
         int gen = int(random(min, max));
          
         float x = 0;
-        int y = screen.top;
+        int y = screen.top + int(width / 8.0);
         float bWidth = width / 8.0;
         float spacing = (width / 7.0) - bWidth;
         for (int i = 1; i <= gen; i++) {
@@ -287,54 +271,20 @@ class MainGame {
          * Called on each iteration of the draw loop
          */
         hud.display();
-        
-        switch(action) {
-        case PREPARE_SHOT:        
-            // Handle aiming
-            if (actionState == GameActionState.ACTION_ACTIVE && mouseY < launchY) {
-                ArrayList<Line> lines;
-              
-                if (DEBUG) {
-                    lines = _get_shot_lines(100);
-                } else {
-                    lines = _get_shot_lines(0);
-                }
-                
-                for (Line line : lines) {
-                    line.display();
-                }
-            }
-            break;
-        case EXECUTING_SHOT:
-            if (balls.size() == 0) {
-                action = GameAction.CHANGE_LEVEL;
-                actionState = GameActionState.ACTION_START;
-            }
-            
-            if (actionState == GameActionState.ACTION_START) {
-                for (int i = 0; i < numBalls; i++) {
-                    Ball ball = new Ball(currentLaunchPoint);
-                    balls.add(ball);
-                    ball.fire(new PVector(-5, -5));
-                }
-                actionState = GameActionState.ACTION_ACTIVE;
-            }
-            
-            for (Ball ball: balls) {
-                ball.move();
-            }
-            
-            break;
-        case CHANGE_LEVEL:
-            // TODO
-            action = GameAction.PREPARE_SHOT;
-            break;
-        }
-        
+ 
+        action = getAction(action);
+        action.display();
+         
         // Display the balls
         for (Ball ball: balls) {
             ball.display();
         }
+        
+        // Delete any blocks that should be deleted
+        for (Block block : deleteBlocks) {
+            blocks.remove(block);
+        }
+        deleteBlocks.clear();
         
         // Display the blocks
         for (Block block : blocks) {
@@ -353,25 +303,11 @@ class MainGame {
         if (input == InputType.TOUCH_START && hud.isTouchInHud()) {
             hud.handleInput(input);
             return;
-        } 
-
-        // Otherwise the game handles it.
-        println("main_game!handleInput: Not touching the HUD!");
+        }
         
-        switch(input) {
-        case TOUCH_START:
-            if (action == GameAction.PREPARE_SHOT) {
-                actionState = GameActionState.ACTION_ACTIVE;
-            }
-            break;
-        case TOUCH_END:
-            if (action == GameAction.PREPARE_SHOT) {
-                actionState = GameActionState.ACTION_START;
-                action = GameAction.EXECUTING_SHOT;
-            }
-            break;
-        case TOUCH_MOVE:
-            break;
+        if (action != null) {
+            action.handleInput(input);
+            return;
         }
     }
 }

@@ -20,7 +20,18 @@ class Line {
     public float rise;
     public float run;
      
+    // Direction components
+    public boolean up;
+    public boolean down;
+    public boolean left;
+    public boolean right;
+     
     Line(PVector start, PVector end) {
+        up = false;
+        down = false;
+        left = false;
+        right = false;
+        
         startPoint = start;
         endPoint = end;
         
@@ -28,10 +39,23 @@ class Line {
             rise = 0;
             run = 0;
             slope = 0;
+            up = true;
         } else {
-            rise = abs(startPoint.y - endPoint.y);
-            run = abs(startPoint.x - endPoint.x);
+            rise = startPoint.y - endPoint.y;
+            run = startPoint.x - endPoint.x;
             slope = rise / run;
+            
+            if (rise > 0) {
+                up = true;
+            } else {
+                down = true;
+            }
+            
+            if (run > 0) {
+                left = true;
+            } else {
+                right = true;
+            }
         }
     }
         

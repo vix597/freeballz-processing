@@ -17,11 +17,19 @@ class GameScreen {
     public int right;
     public int top;
     public int bottom;
+    public int middleX;
+    public int middleY;
+    public int launchY;
+    public PVector launchPoint;
     
     GameScreen(int l, int r, int t, int b) {
         left = l;
         right = r;
         top = t;
         bottom = b;
+        middleX = right / 2;
+        middleY = bottom / 2;
+        launchY = bottom - Ball.radius;
+        launchPoint = new PVector(middleX, launchY);
     }
 }
