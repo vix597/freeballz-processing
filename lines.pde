@@ -10,16 +10,40 @@
  
 class Line {
     /*
-     * Handles drawing a line. Supports collision detection with blocks.
-     * and maintains a direction with vectors.
+     * Handles holding information needed for a line
      */
-    private PVector startPoint;
-    private PVector endPoint;
-    private PVector distVec;
-     
+    
+    public PVector startPoint;
+    public PVector endPoint;
+    
     Line(float startX, float startY, float endX, float endY) {
         startPoint = new PVector(startX, startY);
         endPoint = new PVector(endX, endY);
+    }
+    
+    boolean isVerticle() {
+        return startPoint.x == endPoint.x;
+    }
+    
+    void display() {
+        pushMatrix();
+        stroke(255);
+        line(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+        popMatrix();
+    }
+}
+ 
+ 
+class ShotLine {
+    /*
+     * Handles drawing a line. Supports collision detection with blocks.
+     * and maintains a direction with vectors.
+     */
+    public Line line;
+    private PVector distVec;
+     
+    ShotLine(float startX, float startY, float endX, float endY) {
+        line = new Line(startX, startY, endX, endY);
         extendLine();  // Recalulates endPoint appropriately
         
         for (Block block : mainGame.blocks) {
@@ -28,7 +52,7 @@ class Line {
             }
         }
         
-        distVec = PVector.sub(endPoint, startPoint);  // Get the distance vector for the line
+        distVec = PVector.sub(line.endPoint, line.startPoint);  // Get the distance vector for the line
     }
     
     void display() {
@@ -37,23 +61,19 @@ class Line {
                 checkCollision(block);
             }
         }
-      
-        pushMatrix();
-        stroke(255);
-        line(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-        popMatrix();
+        line.display();
     }
     
     PVector getDistVec() {
         return distVec.copy();
     }
-    
-    boolean isVerticle() {
-        return startPoint.x == endPoint.x;
-    }
-    
+     
     private void checkCollision(Block other) {
         /*
+        Line left = new Line(other.location.x, other.location.y, other.location.x + other.bWidth, other.location.y + other.bWidth);
+        Line right = new Line();
+        Line top = new Line();
+        Line bottom = new Line();
         float x1 = one.get_start().x;
         float y1 = one.get_start().y;
         float x2 = one.get_end().x;
@@ -93,13 +113,13 @@ class Line {
          * Returns a vector of the calculated end point 
          * for the new line
          */
-        float x = startPoint.x;
-        float y = startPoint.y;
-        float x1 = endPoint.x;
-        float y1 = endPoint.y;
+        float x = line.startPoint.x;
+        float y = line.startPoint.y;
+        float x1 = line.endPoint.x;
+        float y1 = line.endPoint.y;
         
         if (x == x1) {
-            endPoint = new PVector(x1, mainGame.screen.top);
+            line.endPoint = new PVector(x1, mainGame.screen.top);
         } else {
             // Otherwise the line is at an angle and we need to do maths
             // m = (y - y1)/(x - x1)
@@ -128,7 +148,7 @@ class Line {
                 newY = (m * newX) + b;
             }
             
-            endPoint = new PVector(newX, newY);
+            line.endPoint = new PVector(newX, newY);
         }
     }
 }
@@ -139,23 +159,20 @@ class ShotLines {
      * Manages the shot lines for the game
      */
      
-    public ArrayList<Line> lines;
+    public ArrayList<ShotLine> lines;
     private int numLines;
      
     ShotLines(int n) {
-        lines = new ArrayList<Line>();
+        lines = new ArrayList<ShotLine>();
         numLines = n;
     }
     
     void display() {
-        pushMatrix();
-        fill(255);
         getShotLines();
         
-        for (Line line : lines) {
+        for (ShotLine line : lines) {
             line.display();
         }
-        popMatrix();
     }
     
     private void getShotLines() {
@@ -166,7 +183,7 @@ class ShotLines {
          */
         lines.clear();  // This is called in display, so clear on each call.
          
-        Line prevLine = new Line(
+        ShotLine prevLine = new ShotLine(
             mainGame.screen.launchPoint.x,
             mainGame.screen.launchPoint.y,
             mouseX,
@@ -176,26 +193,26 @@ class ShotLines {
         lines.add(prevLine);  // We always get at least 1 line.
     
         for (int i = 0; i < numLines; i++) {
-            if (prevLine.endPoint.y == mainGame.screen.bottom) {
+            if (prevLine.line.endPoint.y == mainGame.screen.bottom) {
                 break;  // Balls end at the bottom of the screen
             }
             
-            if (prevLine.isVerticle()) {
+            if (prevLine.line.isVerticle()) {
                 break;  // Don't bother if the line is verticle
             }
             
             PVector distVec = prevLine.getDistVec();
             
-            if (prevLine.endPoint.x == mainGame.screen.left || prevLine.endPoint.x == mainGame.screen.right) {
+            if (prevLine.line.endPoint.x == mainGame.screen.left || prevLine.line.endPoint.x == mainGame.screen.right) {
                 distVec.x *= -1;
             } else {
                 distVec.y *= -1;
             }
             distVec.normalize();
             
-            PVector endPoint = PVector.add(prevLine.endPoint, distVec);
+            PVector endPoint = PVector.add(prevLine.line.endPoint, distVec);
             
-            prevLine = new Line(prevLine.endPoint.x, prevLine.endPoint.y, endPoint.x, endPoint.y);
+            prevLine = new ShotLine(prevLine.line.endPoint.x, prevLine.line.endPoint.y, endPoint.x, endPoint.y);
             lines.add(prevLine);
         }
     }

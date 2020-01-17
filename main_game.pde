@@ -22,7 +22,7 @@ class MainGame {
     public GameScreen screen;
 
     private Ball launchPointBall;
-    public Line launchLine;
+    public ShotLine launchLine;
     
     private int level;
     private int numBalls;
