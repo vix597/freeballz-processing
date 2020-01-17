@@ -111,8 +111,17 @@ class PrepareShot extends Action {
      * Action to prepare a shot. Draws shot lines, etc...
      */
     
+    private ShotLines shotLines;
+    
     PrepareShot() {
         super(GameAction.PREPARE_SHOT);
+        
+        // Initialize our handler for shot lines
+        if (DEBUG) {
+            shotLines = new ShotLines(100);
+        } else {
+            shotLines = new ShotLines(0);
+        }
     }
     
     void actionStart() {}
@@ -120,15 +129,7 @@ class PrepareShot extends Action {
     void actionActive() {
         // Handle aiming
         if (mouseY < mainGame.screen.launchY) {              
-            if (DEBUG) {
-                mainGame._get_shot_lines(100);
-            } else {
-                mainGame._get_shot_lines(0);
-            }
-            
-            for (Line line : mainGame.lines) {
-                line.display();
-            }
+            shotLines.display();
         }
     }
     
@@ -140,6 +141,7 @@ class PrepareShot extends Action {
         
         if (!isTouching && state == GameActionState.ACTION_ACTIVE) {
             // Release
+            mainGame.launchLine = shotLines.lines.get(0);
             nextState();
         }
     }
@@ -161,18 +163,8 @@ class ExecuteShot extends Action {
     }
     
     void actionStart() {
-        Line launchLine = mainGame.lines.get(0);
-        
-        if (launchLine.isVerticle()) {
-            velocity = new PVector(0, MainGame.shotSpeed);
-        } else {
-            velocity = new PVector(abs(launchLine.run), abs(launchLine.rise) * -1);
-            velocity.setMag(MainGame.shotSpeed);
-            
-            if (launchLine.left) {
-                velocity.x = velocity.x * -1;
-            }
-        }
+        velocity = mainGame.launchLine.getDistVec();
+        velocity.setMag(MainGame.shotSpeed);
         
         for (int i = 0; i < mainGame.numBalls; i++) {
             Ball ball = new Ball(mainGame.screen.launchPoint.x, mainGame.screen.launchPoint.y);

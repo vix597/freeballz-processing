@@ -22,6 +22,7 @@ class MainGame {
     public GameScreen screen;
 
     private Ball launchPointBall;
+    public Line launchLine;
     
     private int level;
     private int numBalls;
@@ -31,14 +32,11 @@ class MainGame {
     public ArrayList<Ball> balls;
     public ArrayList<Block> blocks;
     public ArrayList<Block> deleteBlocks;
-    
-    private ArrayList<Line> lines;
-    
+        
     MainGame() {
         balls = new ArrayList<Ball>();
         blocks = new ArrayList<Block>();
         deleteBlocks = new ArrayList<Block>();
-        lines = new ArrayList<Line>();
         action = null;
         
         loadGame();
@@ -65,152 +63,6 @@ class MainGame {
          * Called to save the current game state
          */
         // TODO
-    }
-    
-    PVector _extend_line_down(PVector startPoint, PVector endPoint) {
-        /* 
-         * Draw a line extended to the edge of the
-         * screen based on a start and end point.
-         * Returns a vector of the calculated end point 
-         * for the new line
-         */
-         
-        float x1 = startPoint.x;
-        float y1 = startPoint.y;
-        float x = endPoint.x;
-        float y = endPoint.y;
-        
-        if (x == x1) {
-            return new PVector(x1, screen.bottom);
-        } else {
-            // Otherwise the line is at an angle and we need to do maths
-            // m = (y - y1)/(x - x1)
-            float m = (y - y1) / (x - x1);
-            // y = mx + b, solve for b: b = y - (m * x)
-            float b = y - (m * x);
-            // Then, y = mx + b solve for x: x = (y - b) / m
-            float newX = (screen.bottom - b) / m;
-
-            float newY = screen.bottom;
-            if (newX < 0) {
-                // The line is going off the left of the screen
-                newX = 0;
-                newY = b;
-            } else if (newX > screen.right) {
-                // The line is going off the right of the screen
-                newX = screen.right;
-                newY = (m * newX) + b;
-            }
-            
-            return new PVector(newX, newY);
-        }
-    }
-    
-    PVector _extend_line_up(PVector startPoint, PVector endPoint) {
-        /* 
-         * Draw a line extended to the edge of the
-         * screen based on a start and end point.
-         * Returns a vector of the calculated end point 
-         * for the new line
-         */
-         
-        float x = startPoint.x;
-        float y = startPoint.y;
-        float x1 = endPoint.x;
-        float y1 = endPoint.y;
-        
-        if (x == x1) {
-            return new PVector(x1, screen.top);
-        } else {
-            // Otherwise the line is at an angle and we need to do maths
-            // m = (y - y1)/(x - x1)
-            float m = (y - y1) / (x - x1);
-            // y = mx + b, solve for b: b = y - (m * x)
-            float b = y - (m * x);
-            // Then, y = mx + b solve for x: x = (y - b) / m
-            float newX = (screen.top - b) / m;
-
-            float newY = screen.top;
-            if (newX < 0) {
-                // The line is going off the left of the screen
-                newX = 0;
-                newY = b;
-            } else if (newX > screen.right) {
-                // The line is going off the right of the screen
-                newX = screen.right;
-                newY = (m * newX) + b;
-            }
-            
-            return new PVector(newX, newY);
-        }
-    }
-    
-    void _get_shot_lines(int num_lines) {
-        /*
-         * Draw the shot lines. num_lines determines
-         * how many additional lines to draw after the
-         * first. Returns the lines to be drawn.
-         */
-        lines.clear();
-         
-        Line prevLine = new Line(
-            screen.launchPoint,
-            _extend_line_up(screen.launchPoint, new PVector(mouseX, mouseY))
-        );
-            
-        lines.add(prevLine);  // We always get at least 1 line.
-    
-        for (int i = 0; i < num_lines; i++) {
-            if (prevLine.endPoint.y == screen.bottom) {
-              break;  // Balls end at the bottom of the screen
-            }
-            
-            if (prevLine.isVerticle()) {
-                break;  // Don't bother if the line is verticle
-            }
-            
-            if (prevLine.endPoint.y == screen.top) {  // Ends at the top boundary
-                PVector nextPoint;
-                if (prevLine.endPoint.x < screen.middleX) {
-                    nextPoint = new PVector(prevLine.endPoint.x - prevLine.run, prevLine.endPoint.y + prevLine.rise);
-                } else {
-                    nextPoint = new PVector(prevLine.endPoint.x - prevLine.run, prevLine.endPoint.y + prevLine.rise);
-                }
-                
-                prevLine = new Line(prevLine.endPoint, _extend_line_down(prevLine.endPoint, nextPoint));
-                lines.add(prevLine);
-            } else if (prevLine.endPoint.x == 0) {
-                // Ends at the left boundary
-                PVector nextPoint, endPoint;
-                if (prevLine.up) {
-                    // Line direction is "up" the screen
-                    nextPoint = new PVector(prevLine.endPoint.x + prevLine.run, prevLine.endPoint.y - prevLine.rise);
-                    endPoint = _extend_line_up(prevLine.endPoint, nextPoint);
-                } else {
-                    // Line direction is "down" the screen
-                    nextPoint = new PVector(prevLine.endPoint.x + prevLine.run, prevLine.endPoint.y - prevLine.rise);
-                    endPoint = _extend_line_down(prevLine.endPoint, nextPoint);
-                }
-                
-                prevLine = new Line(prevLine.endPoint, endPoint);
-                lines.add(prevLine);
-            } else if (prevLine.endPoint.x == screen.right) {
-                // Ends at the right boundary
-                PVector nextPoint, endPoint;
-                if (prevLine.up) {
-                    // Line direction is "up" the screen
-                    nextPoint = new PVector(prevLine.endPoint.x - prevLine.run, prevLine.endPoint.y + prevLine.rise);
-                    endPoint = _extend_line_up(prevLine.endPoint, nextPoint);
-                } else {
-                    // Line direction is "down" the screen
-                    nextPoint = new PVector(prevLine.endPoint.x - prevLine.run, prevLine.endPoint.y + prevLine.rise);
-                    endPoint = _extend_line_down(prevLine.endPoint, nextPoint);
-                }
-                
-                prevLine = new Line(prevLine.endPoint, endPoint);
-                lines.add(prevLine);
-            }
-        }
     }
     
     int getBlockValue() {
