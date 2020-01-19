@@ -107,7 +107,7 @@ class Block {
         fill(0);
         textAlign(CENTER);
         textSize(BLOCK_FONT);
-        text(str(remHitPoints), middle.x, middle.y + 10);  // +10 to make the number more "centered"
+        text(str(remHitPoints), middle.x, middle.y + (BLOCK_FONT * 0.384615));  // to make the number more "centered"
         popMatrix();
     }
 }

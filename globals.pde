@@ -32,8 +32,8 @@ MainGame mainGame;
 //
 // These are set in setup()
 //
-float BALL_RADIUS = 12;
-float SHOT_SPEED = 7;
-float BLOCK_WIDTH = width / 7.0;
-float BLOCK_XY_SPACING = BLOCK_WIDTH * 0.05;
-float BLOCK_FONT = 26;
+float BALL_RADIUS;
+float SHOT_SPEED;
+float BLOCK_WIDTH;
+float BLOCK_XY_SPACING;
+float BLOCK_FONT;
