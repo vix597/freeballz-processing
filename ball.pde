@@ -18,9 +18,7 @@ class Ball {
 
     private PVector velocity;  // Location for an ellipse is the center of the ellipse.
     private PVector location;
-    
-    public static final int radius = 12;
-    
+      
     Ball(PVector loc) {
         /*
          * This constructor takes a PVector and stores the reference.
@@ -41,7 +39,7 @@ class Ball {
        velocity = new PVector(0, 0);
        isDelete = false;
     }
-    
+        
     void display() {
         /*
          * Called from the main draw method. Used to display the ball
@@ -53,15 +51,15 @@ class Ball {
 
         pushMatrix();
         fill(255);
-        ellipse(location.x, location.y, (radius * 2), (radius * 2));
+        ellipse(location.x, location.y, (BALL_RADIUS * 2), (BALL_RADIUS * 2));
         popMatrix();
     }
     
-    void setVelocityMag(int mag) {
+    void setVelocityMag(float mag) {
         // Used to speed up the play. Max speed cannot exceed
-        // Ball.radius * 1.75 for collision detection
-        if (mag >= int(Ball.radius * 1.25) - 1) {
-            mag = int(Ball.radius * 1.25) - 1;
+        // BALL_RADIUS * 1.25 for collision detection
+        if (mag >= (BALL_RADIUS * 1.25) - 1) {
+            mag = (BALL_RADIUS * 1.25) - 1;
         }
         velocity.setMag(mag);
     }
@@ -95,16 +93,16 @@ class Ball {
         /*
          * Check for collision with the screen boundary
          */
-        if (location.x > mainGame.screen.right - radius) {
-          location.x = mainGame.screen.right - radius;
+        if (location.x > mainGame.screen.right - BALL_RADIUS) {
+          location.x = mainGame.screen.right - BALL_RADIUS;
           velocity.x *= -1;
-        } else if (location.x < radius) {
-          location.x = radius;
+        } else if (location.x < BALL_RADIUS) {
+          location.x = BALL_RADIUS;
           velocity.x *= -1;
-        } else if (location.y > mainGame.screen.bottom - radius) {
+        } else if (location.y > mainGame.screen.bottom - BALL_RADIUS) {
           isDelete = true;  // Balls die at the bottom of the play area
-        } else if (location.y < mainGame.screen.top + radius) {
-          location.y = mainGame.screen.top + radius;
+        } else if (location.y < mainGame.screen.top + BALL_RADIUS) {
+          location.y = mainGame.screen.top + BALL_RADIUS;
           velocity.y *= -1;
         }
     }
@@ -119,31 +117,31 @@ class Ball {
         float dist = distVec.mag();
     
         // Minimum distance before they are touching
-        float minDistance = radius + other.radius;
+        float minDistance = BALL_RADIUS + other.radius;
     
         if (dist < minDistance) {
             // Collision is impossible until this is true.
             boolean above = false, below = false, left = false, right = false;
             
             // Get the leading point on the circle
-            PVector radiusVec = velocity.setMag(null, radius);
+            PVector radiusVec = velocity.setMag(null, BALL_RADIUS);
             PVector edgePoint = PVector.add(location, radiusVec);
             
             if (location.x > other.right) {
                 // ball is on the right of the block
-                edgePoint = new PVector(location.x - radius, location.y);
+                edgePoint = new PVector(location.x - BALL_RADIUS, location.y);
                 right = true;
             } else if (location.x < other.left) {
                 // ball is on the left of the block
-                edgePoint = new PVector(location.x + radius, location.y);
+                edgePoint = new PVector(location.x + BALL_RADIUS, location.y);
                 left = true;
             } else if (location.y > other.bottom) {
                 // ball is underneith
-                edgePoint = new PVector(location.x, location.y - radius);
+                edgePoint = new PVector(location.x, location.y - BALL_RADIUS);
                 below = true;
             } else if (location.y < other.top) {
                 // ball is above
-                edgePoint = new PVector(location.x, location.y + radius);
+                edgePoint = new PVector(location.x, location.y + BALL_RADIUS);
                 above = true;
             }
             
@@ -155,13 +153,13 @@ class Ball {
                 }
                 
                 if (left) {
-                    location.x = other.left - radius;
+                    location.x = other.left - BALL_RADIUS;
                 } else if (right) {
-                    location.x = other.right + radius;
+                    location.x = other.right + BALL_RADIUS;
                 } else if (above) {
-                    location.y = other.top - radius;
+                    location.y = other.top - BALL_RADIUS;
                 } else if (below) {
-                    location.y = other.bottom + radius;
+                    location.y = other.bottom + BALL_RADIUS;
                 }
                 
                 other.hit();

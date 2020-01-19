@@ -19,10 +19,10 @@ class Hud {
     private static final float topSizePercent = 10.0;
     private static final float bottomSizePercent = 10.0;
     
-    private int bottomLine;
-    private int topLine;
-    private int topHeight;
-    private int bottomHeight;
+    private float bottomLine;
+    private float topLine;
+    private float topHeight;
+    private float bottomHeight;
     
     private int level;
     private int numBalls;
@@ -42,14 +42,14 @@ class Hud {
       bottomLine = height - bottomHeight;
     }
     
-    int getTopLine() {
+    float getTopLine() {
         /*
          * Return the bottom of the top of the HUD
          */
         return topLine;
     }
     
-    int getBottomLine() {
+    float getBottomLine() {
         /*
          * Return the top of the bottom of the HUD
          */

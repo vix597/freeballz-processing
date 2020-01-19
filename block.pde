@@ -23,11 +23,11 @@ class Block {
     public int hitPoints;     // Number of points this block is worth
     public int remHitPoints;  // Hit points remaining
     public boolean isDelete;  // Whether or not the block is dead
-    public int spacingX;      // Number of pixels to use as spacing to the left and right of the block
-    public int spacingY;      // Number of pixels to use as spacing above and below the block
+    public float spacingX;    // Number of pixels to use as spacing to the left and right of the block
+    public float spacingY;    // Number of pixels to use as spacing above and below the block
     
-    Block(PVector loc, int points, float _bWidth, int _spacingX, int _spacingY) {
-        bWidth = _bWidth;
+    Block(PVector loc, int points) {
+        bWidth = BLOCK_WIDTH;
         location = loc;
         hitPoints = points;
         remHitPoints = points;
@@ -37,8 +37,8 @@ class Block {
         bottom = location.y + bWidth;
         middle = new PVector(location.x + (bWidth / 2.0), location.y + (bWidth / 2.0));
         isDelete = false;
-        spacingX = _spacingX;
-        spacingY = _spacingY;
+        spacingX = BLOCK_XY_SPACING;
+        spacingY = BLOCK_XY_SPACING;
 
         PVector distVec = PVector.sub(middle, location);
         radius = distVec.mag();
@@ -106,7 +106,7 @@ class Block {
         pushMatrix();
         fill(0);
         textAlign(CENTER);
-        textSize(26);
+        textSize(BLOCK_FONT);
         text(str(remHitPoints), middle.x, middle.y + 10);  // +10 to make the number more "centered"
         popMatrix();
     }

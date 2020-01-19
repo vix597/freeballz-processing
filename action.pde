@@ -152,12 +152,12 @@ class ExecuteShot extends Action {
     /*
      * Action to execute a shot.
      */
-    private static final int reqDist = Ball.radius * 4;
-
+    private float reqDist = BALL_RADIUS * 4;
     private PVector velocity;
+    private boolean launchPosUpdated;
     private int deleteCount;
     private int launchCount;
-    private int velocityMag;
+    private float velocityMag;
     private Ball prevBall;
     
     ExecuteShot() {
@@ -166,12 +166,13 @@ class ExecuteShot extends Action {
         prevBall = null;
         deleteCount = 0;
         launchCount = 1;
-        velocityMag = MainGame.shotSpeed;
+        launchPosUpdated = false;
+        velocityMag = SHOT_SPEED;
     }
     
     void actionStart() {
         velocity = mainGame.launchLine.getDistVec();
-        velocity.setMag(MainGame.shotSpeed);
+        velocity.setMag(SHOT_SPEED);
         
         for (int i = 0; i < mainGame.numBalls; i++) {
             Ball ball = new Ball(mainGame.screen.launchPoint.x, mainGame.screen.launchPoint.y);
@@ -203,10 +204,11 @@ class ExecuteShot extends Action {
                 deleteCount++;
             }
             
-            if (deleteCount == 1) {
+            if (deleteCount == 1 && !launchPosUpdated) {
                 // The first ball to land updates
                 // the new launch 'x' position.
                 mainGame.screen.launchPoint.x = ball.location.x;
+                launchPosUpdated = true;
             }
             
             i++;
@@ -216,11 +218,12 @@ class ExecuteShot extends Action {
                 break;            
             }
         }
-            
+         
         for (Ball ball: deleteBalls) {
             mainGame.balls.remove(ball);
         }
         
+        launchCount -= deleteBalls.size();
         deleteBalls.clear();
     }
     
@@ -229,7 +232,7 @@ class ExecuteShot extends Action {
         
         if (input == InputType.TOUCH_END && state == GameActionState.ACTION_ACTIVE) {
             // SPEED UP!
-            velocityMag += MainGame.shotSpeed;
+            velocityMag += SHOT_SPEED;
             for (Ball ball : mainGame.balls) {
                 ball.setVelocityMag(velocityMag);
             }

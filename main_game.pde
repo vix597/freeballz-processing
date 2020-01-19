@@ -11,9 +11,7 @@
 class MainGame {
     /*
      * This is where the main game logic exists
-     */
-    public static final int shotSpeed = 7;
-    
+     */    
     private Hud hud;
     
     private Action action;
@@ -97,15 +95,14 @@ class MainGame {
         int gen = int(random(min, max));
          
         float x = 0;
-        int y = screen.top + int(width / 7.0);
-        float bWidth = width / 7.0;
+        float y = screen.top + BLOCK_WIDTH;
         for (int i = 1; i <= gen; i++) {
-            Block block = new Block(new PVector(x, y), getBlockValue(), int(bWidth), 3, 3);
+            Block block = new Block(new PVector(x, y), getBlockValue());
             blocks.add(block);
 
-            x += bWidth;
+            x += BLOCK_WIDTH;
             if (i % 7 == 0 && i > 0) {
-                y += bWidth;
+                y += BLOCK_WIDTH;
                 x = 0;
             }
         }
