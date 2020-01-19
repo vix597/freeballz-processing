@@ -17,8 +17,22 @@ class Line {
     public PVector endPoint;
     
     Line(float startX, float startY, float endX, float endY) {
+        /*
+         * Create a line from 4 points. The PVector objects are created
+         * here.
+         */
         startPoint = new PVector(startX, startY);
         endPoint = new PVector(endX, endY);
+    }
+    
+    Line(PVector start, PVector end) {
+        /*
+         * Creates a line using 2 PVectors as reference.
+         * If the provided PVector references are changed in
+         * the calling environment, the line will be changed.
+         */
+        startPoint = start;
+        endPoint = end;
     }
     
     boolean isVerticle() {
@@ -110,8 +124,6 @@ class ShotLine {
         /* 
          * Draw a line extended to the edge of the
          * screen based on a start and end point.
-         * Returns a vector of the calculated end point 
-         * for the new line
          */
         float x = line.startPoint.x;
         float y = line.startPoint.y;

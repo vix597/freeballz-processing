@@ -53,7 +53,7 @@ class MainGame {
          * Load the game state
          */
         level = 100;
-        numBalls = 1;
+        numBalls = 400;
         score = 0;
         coins = 0;
     }
@@ -97,22 +97,15 @@ class MainGame {
         int gen = int(random(min, max));
          
         float x = 0;
-        int y = screen.top + int(width / 8.0);
-        float bWidth = width / 8.0;
-        float spacing = (width / 7.0) - bWidth;
+        int y = screen.top + int(width / 7.0);
+        float bWidth = width / 7.0;
         for (int i = 1; i <= gen; i++) {
-            Block block = new Block(
-                new PVector(x, y),
-                getBlockValue(),
-                int(bWidth)
-            );
-            
+            Block block = new Block(new PVector(x, y), getBlockValue(), int(bWidth), 3, 3);
             blocks.add(block);
 
-            x += bWidth + spacing;
-            
+            x += bWidth;
             if (i % 7 == 0 && i > 0) {
-                y += bWidth + spacing;
+                y += bWidth;
                 x = 0;
             }
         }

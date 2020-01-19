@@ -23,8 +23,10 @@ class Block {
     public int hitPoints;     // Number of points this block is worth
     public int remHitPoints;  // Hit points remaining
     public boolean isDelete;  // Whether or not the block is dead
+    public int spacingX;      // Number of pixels to use as spacing to the left and right of the block
+    public int spacingY;      // Number of pixels to use as spacing above and below the block
     
-    Block(PVector loc, int points, float _bWidth) {
+    Block(PVector loc, int points, float _bWidth, int _spacingX, int _spacingY) {
         bWidth = _bWidth;
         location = loc;
         hitPoints = points;
@@ -35,6 +37,8 @@ class Block {
         bottom = location.y + bWidth;
         middle = new PVector(location.x + (bWidth / 2.0), location.y + (bWidth / 2.0));
         isDelete = false;
+        spacingX = _spacingX;
+        spacingY = _spacingY;
 
         PVector distVec = PVector.sub(middle, location);
         radius = distVec.mag();
@@ -86,7 +90,12 @@ class Block {
         pushMatrix();
         fill(getColor());
         stroke(100);
-        rect(location.x, location.y, bWidth, bWidth);
+        
+        // We want to display the block in the middle of the hit box
+        // and a little smaller so that it looks like there are gaps
+        // between blocks.
+        rect(location.x + spacingX, location.y + spacingY, bWidth - spacingX, bWidth - spacingY);
+
         popMatrix();
     }
     

@@ -152,14 +152,21 @@ class ExecuteShot extends Action {
     /*
      * Action to execute a shot.
      */
-    
+    private static final int reqDist = Ball.radius * 4;
+
     private PVector velocity;
     private int deleteCount;
+    private int launchCount;
+    private int velocityMag;
+    private Ball prevBall;
     
     ExecuteShot() {
         super(GameAction.EXECUTING_SHOT);
         velocity = null;
+        prevBall = null;
         deleteCount = 0;
+        launchCount = 1;
+        velocityMag = MainGame.shotSpeed;
     }
     
     void actionStart() {
@@ -175,14 +182,20 @@ class ExecuteShot extends Action {
     }
     
     void actionActive() {
+        ArrayList<Ball> deleteBalls = new ArrayList<Ball>();
+      
         if (mainGame.balls.size() == 0) {
             println("shot complete");
             nextState();
         }
         
-        ArrayList<Ball> deleteBalls = new ArrayList<Ball>();
-    
-        for (Ball ball: mainGame.balls) {
+        if (prevBall != null && prevBall.distTraveled >= reqDist) {
+            prevBall = null;
+            launchCount++;
+        }
+      
+        int i = 0;
+        for (Ball ball : mainGame.balls) {
             ball.move();
             
             if (ball.isDelete) {
@@ -195,13 +208,32 @@ class ExecuteShot extends Action {
                 // the new launch 'x' position.
                 mainGame.screen.launchPoint.x = ball.location.x;
             }
+            
+            i++;
+
+            if (i >= launchCount) {
+                prevBall = ball;
+                break;            
+            }
         }
-        
+            
         for (Ball ball: deleteBalls) {
             mainGame.balls.remove(ball);
         }
         
         deleteBalls.clear();
+    }
+    
+    void handleInput(InputType input) {
+        super.handleInput(input);
+        
+        if (input == InputType.TOUCH_END && state == GameActionState.ACTION_ACTIVE) {
+            // SPEED UP!
+            velocityMag += MainGame.shotSpeed;
+            for (Ball ball : mainGame.balls) {
+                ball.setVelocityMag(velocityMag);
+            }
+        }
     }
 }
 

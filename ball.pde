@@ -14,6 +14,7 @@ class Ball {
      */
 
     public boolean isDelete;
+    public float distTraveled;
 
     private PVector velocity;  // Location for an ellipse is the center of the ellipse.
     private PVector location;
@@ -28,6 +29,7 @@ class Ball {
         location = loc;
         velocity = new PVector(0, 0);
         isDelete = false;
+        distTraveled = 0;
     }
     
     Ball(float x, float y) {
@@ -55,11 +57,20 @@ class Ball {
         popMatrix();
     }
     
+    void setVelocityMag(int mag) {
+        // Used to speed up the play. Max speed cannot exceed
+        // Ball.radius * 1.75 for collision detection
+        if (mag >= int(Ball.radius * 1.25) - 1) {
+            mag = int(Ball.radius * 1.25) - 1;
+        }
+        velocity.setMag(mag);
+    }
+    
     void fire(PVector vel) {
         /*
          * Set the balls velocity
          */
-        velocity = vel;
+        velocity = vel.copy();
     }
     
     void move() {
@@ -70,6 +81,7 @@ class Ball {
             return;
         }
          
+        distTraveled += velocity.mag();
         location.add(velocity);
         checkBoundaryCollision();
         for (Block block : mainGame.blocks) {
