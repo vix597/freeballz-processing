@@ -14,11 +14,12 @@ class Ball {
      */
 
     public boolean isDelete;
+    public boolean fired;
     public float distTraveled;
 
     private PVector velocity;  // Location for an ellipse is the center of the ellipse.
     private PVector location;
-      
+    
     Ball(PVector loc) {
         /*
          * This constructor takes a PVector and stores the reference.
@@ -27,6 +28,7 @@ class Ball {
         location = loc;
         velocity = new PVector(0, 0);
         isDelete = false;
+        fired = false;
         distTraveled = 0;
     }
     
@@ -38,6 +40,8 @@ class Ball {
        location = new PVector(x, y);
        velocity = new PVector(0, 0);
        isDelete = false;
+       fired = false;
+       distTraveled = 0;
     }
         
     void display() {
@@ -55,20 +59,29 @@ class Ball {
         popMatrix();
     }
     
+    void setVelocity(PVector vel) {
+        /*
+         * Set the ball's velocity
+         */
+        velocity = vel.copy();
+    }
+    
     void setVelocityMag(float mag) {
-        // Used to speed up the play. Max speed cannot exceed
-        // BALL_RADIUS * 1.25 for collision detection
+        /*
+         * Used to speed up the play. Max speed cannot exceed
+         * BALL_RADIUS * 1.25 for collision detection
+         */ 
         if (mag >= (BALL_RADIUS * 1.25) - 1) {
             mag = (BALL_RADIUS * 1.25) - 1;
         }
         velocity.setMag(mag);
     }
     
-    void fire(PVector vel) {
+    void fire() {
         /*
-         * Set the balls velocity
+         * Set the ball's state to fired
          */
-        velocity = vel.copy();
+        fired = true;
     }
     
     void move() {
@@ -83,7 +96,7 @@ class Ball {
         location.add(velocity);
         checkBoundaryCollision();
         for (Block block : mainGame.blocks) {
-            if (!block.isDelete) {
+            if (!block.isDelete && !block.isExplode) {
                 checkCollision(block);
             }
         }
@@ -93,6 +106,10 @@ class Ball {
         /*
          * Check for collision with the screen boundary
          */
+        if (!fired) {
+            return;
+        }
+         
         if (location.x > mainGame.screen.right - BALL_RADIUS) {
           location.x = mainGame.screen.right - BALL_RADIUS;
           velocity.x *= -1;
@@ -111,6 +128,9 @@ class Ball {
         /*
          * Check for a collision with a block
          */
+        if (!fired) {
+            return;
+        }
       
         // Get distances between the objects
         PVector distVec = PVector.sub(other.middle, location);  // Location for ellipse is middle

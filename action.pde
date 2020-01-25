@@ -176,9 +176,10 @@ class ExecuteShot extends Action {
         
         for (int i = 0; i < mainGame.numBalls; i++) {
             Ball ball = new Ball(mainGame.screen.launchPoint.x, mainGame.screen.launchPoint.y);
+            ball.setVelocity(velocity);
             mainGame.balls.add(ball);
-            ball.fire(velocity);  // Pass a ref to velocity. If we change this class' velocity, it will change all balls.
         }
+        
         nextState();
     }
     
@@ -197,6 +198,10 @@ class ExecuteShot extends Action {
       
         int i = 0;
         for (Ball ball : mainGame.balls) {
+            if (!ball.fired) {
+                ball.fire();
+            }
+          
             ball.move();
             
             if (ball.isDelete) {

@@ -1,32 +1,75 @@
 /*
  * block.pde
  *
- * Class for a Block
+ * Class for a Block and Particle (for block explosion)
  *
  *  Created on: January 11, 2020
  *      Author: Sean LaPlante
  */
 
 
+class Particle {
+    /*
+     * Explosion particle class used when a block is destroyed
+     */
+    color col;
+    PVector location;
+    PVector velocity;
+    float bWidth;
+    float alpha;
+
+    Particle(float x, float y, color _col) {
+        float xspeed = random(-2, 2);
+        float yspeed = random(-2, 2);
+        bWidth = EXPLODE_PARTICLE_BWIDTH;
+        alpha = 300;
+
+        col = _col;
+        location = new PVector(x, y);
+        velocity = new PVector(xspeed, yspeed);
+    }
+    
+    void display() {
+        location.add(velocity);
+
+        pushMatrix();
+        noStroke();
+        fill(col, alpha);
+        rect(location.x, location.y, bWidth, bWidth);
+        popMatrix();
+        
+        alpha -= 10;
+    }
+}
+
+
 class Block {
     /*
      * A block with hit points, size, and location
      */
-    public float left;        // x value of left side of block (same as location.x)
-    public float right;       // x value of right side of block (same as location.x + bWidth)
-    public float top;         // y position of top of block (same as location.y)
-    public float bottom;      // y position of bottom of block (same as location.y + bWidth)
-    public float radius;      // the distance from the middle to a corner
-    public PVector location;  // x, y coords of top left corner of block
-    public PVector middle;    // x, y coords of the middle of the block
-    public float bWidth;      // Width and height of block (it's a square)
-    public int hitPoints;     // Number of points this block is worth
-    public int remHitPoints;  // Hit points remaining
-    public boolean isDelete;  // Whether or not the block is dead
-    public float spacingX;    // Number of pixels to use as spacing to the left and right of the block
-    public float spacingY;    // Number of pixels to use as spacing above and below the block
+    public float left;          // x value of left side of block (same as location.x)
+    public float right;         // x value of right side of block (same as location.x + bWidth)
+    public float top;           // y position of top of block (same as location.y)
+    public float bottom;        // y position of bottom of block (same as location.y + bWidth)
+    public float radius;        // the distance from the middle to a corner
+    public PVector location;    // x, y coords of top left corner of block
+    public PVector middle;      // x, y coords of the middle of the block
+    public float bWidth;        // Width and height of block (it's a square)
+    public int hitPoints;       // Number of points this block is worth
+    public int remHitPoints;    // Hit points remaining
+    public boolean isDelete;    // Whether or not the block is dead
+    public boolean isExplode;   // Whether or not the block is exploding
+    public float spacingX;      // Number of pixels to use as spacing to the left and right of the block
+    public float spacingY;      // Number of pixels to use as spacing above and below the block
+    
+    private int explodeFrames;                     // Number of frames required for explosion
+    private int explodeFrameCount;                 // Number of frames executed so far in explode animation
+    private ArrayList<Particle> explodeParticles;  // The particles
+    private int maxExplodeParticles;               // Number of particles to create for an explosion
+    
     
     Block(PVector loc, int points) {
+        explodeFrames = int(FRAME_RATE / 3.0);
         bWidth = BLOCK_WIDTH;
         location = loc;
         hitPoints = points;
@@ -37,8 +80,12 @@ class Block {
         bottom = location.y + bWidth;
         middle = new PVector(location.x + (bWidth / 2.0), location.y + (bWidth / 2.0));
         isDelete = false;
+        isExplode = false;
         spacingX = BLOCK_XY_SPACING;
         spacingY = BLOCK_XY_SPACING;
+        maxExplodeParticles = EXPLODE_PARTICLE_COUNT;
+
+        explodeParticles = new ArrayList<Particle>(maxExplodeParticles);
 
         PVector distVec = PVector.sub(middle, location);
         radius = distVec.mag();
@@ -50,6 +97,9 @@ class Block {
          * on the screen.
          */
         if (isDelete) {
+            return;
+        } else if (isExplode) {
+            explode();
             return;
         }
          
@@ -63,9 +113,28 @@ class Block {
          */
         remHitPoints--;
         if (remHitPoints == 0) {
+            isExplode = true;
+            for (int i =0; i < maxExplodeParticles; i++) {
+                explodeParticles.add(new Particle(middle.x, middle.y, getColor()));
+            }
+        }
+    }
+    
+    private void explode() {
+        /*
+         * Internal method called when the hit-points reach 0
+         */
+        if (explodeFrameCount >= explodeFrames) {
             isDelete = true;
+            explodeParticles.clear();
             mainGame.deleteBlocks.add(this);
         }
+        
+        for (Particle p : explodeParticles) {
+            p.display();
+        }
+        
+        explodeFrameCount++;
     }
     
     private color getColor() {
@@ -73,8 +142,8 @@ class Block {
          * Get the current color of the block based on it's current remaining hit points.
          * starting values of r,g,b are 28, 230, and 88 respectively.
          */
-        if (remHitPoints < 10) {
-        
+        if (remHitPoints == 0) {
+            return color(28, 230, 88);
         }
         return color(
             int(28 + (remHitPoints)),
@@ -105,9 +174,9 @@ class Block {
          */
         pushMatrix();
         fill(0);
-        textAlign(CENTER);
+        textAlign(CENTER, CENTER);
         textSize(BLOCK_FONT);
-        text(str(remHitPoints), middle.x, middle.y + (BLOCK_FONT * 0.384615));  // to make the number more "centered"
+        text(str(remHitPoints), middle.x, middle.y);
         popMatrix();
     }
 }

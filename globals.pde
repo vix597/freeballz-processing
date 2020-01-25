@@ -27,6 +27,8 @@ StartScreen startScreen;
 MainGame mainGame;
 
 
+int FRAME_RATE = 90;
+
 //
 // Globally set these based on DPI
 //
@@ -35,5 +37,8 @@ MainGame mainGame;
 float BALL_RADIUS;
 float SHOT_SPEED;
 float BLOCK_WIDTH;
+int EXPLODE_PARTICLE_COUNT;
+float EXPLODE_PARTICLE_BWIDTH;
 float BLOCK_XY_SPACING;
 float BLOCK_FONT;
+float DEFAULT_TEXT_SIZE;

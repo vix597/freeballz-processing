@@ -22,8 +22,8 @@ class StartScreen {
          */
         
         pushMatrix();
-        textAlign(CENTER);
-        textSize(42 * displayDensity);
+        textAlign(CENTER, CENTER);
+        textSize(DEFAULT_TEXT_SIZE);
         fill(255);
         text("Touch to start", width/2, height/2);
         popMatrix();

@@ -50,8 +50,8 @@ class MainGame {
         /*
          * Load the game state
          */
-        level = 100;
-        numBalls = 400;
+        level = 10;
+        numBalls = 50;
         score = 0;
         coins = 0;
     }
@@ -88,8 +88,8 @@ class MainGame {
             min = 1;
             max = level;
         } else {
-            min = 1;
-            max = 7;
+            min = 10;
+            max = 25;
         }
 
         int gen = int(random(min, max));
