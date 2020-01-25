@@ -19,8 +19,8 @@ class Particle {
     float alpha;
 
     Particle(float x, float y, color _col) {
-        float xspeed = random(-2, 2);
-        float yspeed = random(-2, 2);
+        float xspeed = random(-3, 3);
+        float yspeed = random(-3, 3);
         bWidth = EXPLODE_PARTICLE_BWIDTH;
         alpha = 300;
 
@@ -38,7 +38,7 @@ class Particle {
         rect(location.x, location.y, bWidth, bWidth);
         popMatrix();
         
-        alpha -= 10;
+        alpha -= EXPLODE_ALPHA_CHANGE;
     }
 }
 
@@ -66,7 +66,7 @@ class Block {
     private int explodeFrameCount;                 // Number of frames executed so far in explode animation
     private ArrayList<Particle> explodeParticles;  // The particles
     private int maxExplodeParticles;               // Number of particles to create for an explosion
-    
+    private float maxHSB;                          // Max for hue saturation brightness
     
     Block(PVector loc, int points) {
         explodeFrames = int(FRAME_RATE / 3.0);
@@ -84,6 +84,7 @@ class Block {
         spacingX = BLOCK_XY_SPACING;
         spacingY = BLOCK_XY_SPACING;
         maxExplodeParticles = EXPLODE_PARTICLE_COUNT;
+        maxHSB = random(1, 100) + (hitPoints * random(1.0, 1.3));
 
         explodeParticles = new ArrayList<Particle>(maxExplodeParticles);
 
@@ -114,9 +115,11 @@ class Block {
         remHitPoints--;
         if (remHitPoints == 0) {
             isExplode = true;
+            colorMode(HSB, maxHSB, maxHSB, 100);
             for (int i =0; i < maxExplodeParticles; i++) {
                 explodeParticles.add(new Particle(middle.x, middle.y, getColor()));
             }
+            colorMode(RGB, 255, 255, 255);
         }
     }
     
@@ -140,16 +143,10 @@ class Block {
     private color getColor() {
         /*
          * Get the current color of the block based on it's current remaining hit points.
-         * starting values of r,g,b are 28, 230, and 88 respectively.
          */
-        if (remHitPoints == 0) {
-            return color(28, 230, 88);
-        }
-        return color(
-            int(28 + (remHitPoints)),
-            int(230 - (remHitPoints / 1.2)),
-            int(88 - (remHitPoints / 3.5))
-        );
+        float hue = constrain((remHitPoints * 1.5), 10, maxHSB);
+        float sat = constrain((hitPoints - (remHitPoints / 2)), 10, maxHSB);
+        return color(hue, sat, 100);
     }
     
     private void displayBlock() {
@@ -157,7 +154,9 @@ class Block {
          * Display the block
          */
         pushMatrix();
+        colorMode(HSB, maxHSB, maxHSB, 100);
         fill(getColor());
+        colorMode(RGB, 255, 255, 255);
         stroke(100);
         
         // We want to display the block in the middle of the hit box

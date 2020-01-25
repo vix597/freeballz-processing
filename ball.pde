@@ -14,6 +14,7 @@ class Ball {
      */
 
     public boolean isDelete;
+    public boolean isDone;
     public boolean fired;
     public float distTraveled;
 
@@ -28,6 +29,7 @@ class Ball {
         location = loc;
         velocity = new PVector(0, 0);
         isDelete = false;
+        isDone = false;
         fired = false;
         distTraveled = 0;
     }
@@ -41,6 +43,7 @@ class Ball {
        velocity = new PVector(0, 0);
        isDelete = false;
        fired = false;
+       isDone = false;
        distTraveled = 0;
     }
         
@@ -90,15 +93,42 @@ class Ball {
          */        
         if (isDelete) {
             return;
+        } else if (isDone) {
+            checkIsDelete();
+            return;
         }
          
         distTraveled += velocity.mag();
         location.add(velocity);
+        
         checkBoundaryCollision();
         for (Block block : mainGame.blocks) {
             if (!block.isDelete && !block.isExplode) {
                 checkCollision(block);
             }
+        }
+    }
+    
+    void checkIsDelete() {
+        if (location.x == mainGame.screen.launchPoint.x) {
+            isDelete = true;
+            return;
+        } else if (velocity.x < 0 && location.x < mainGame.screen.launchPoint.x) {
+            isDelete = true;
+            return;
+        } else if (velocity.x > 0 && location.x > mainGame.screen.launchPoint.x) {
+            isDelete = true;
+            return;
+        }
+        
+        if (location.x > mainGame.screen.launchPoint.x + (BALL_RADIUS * 2)) {
+            velocity.x = BALL_RADIUS * -1;
+            location.add(velocity);
+        } else if (location.x < mainGame.screen.launchPoint.x - (BALL_RADIUS * 2)) {
+            velocity.x = BALL_RADIUS;
+            location.add(velocity);
+        } else {
+            location.x = mainGame.screen.launchPoint.x;
         }
     }
     
@@ -117,7 +147,10 @@ class Ball {
           location.x = BALL_RADIUS;
           velocity.x *= -1;
         } else if (location.y > mainGame.screen.bottom - BALL_RADIUS) {
-          isDelete = true;  // Balls die at the bottom of the play area
+          isDone = true;
+          velocity.y = 0;
+          velocity.x = 0;
+          location.y = mainGame.screen.launchPoint.y;
         } else if (location.y < mainGame.screen.top + BALL_RADIUS) {
           location.y = mainGame.screen.top + BALL_RADIUS;
           velocity.y *= -1;

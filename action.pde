@@ -155,7 +155,7 @@ class ExecuteShot extends Action {
     private float reqDist = BALL_RADIUS * 4;
     private PVector velocity;
     private boolean launchPosUpdated;
-    private int deleteCount;
+    private int doneCount;
     private int launchCount;
     private float velocityMag;
     private Ball prevBall;
@@ -164,7 +164,7 @@ class ExecuteShot extends Action {
         super(GameAction.EXECUTING_SHOT);
         velocity = null;
         prevBall = null;
-        deleteCount = 0;
+        doneCount = 0;
         launchCount = 1;
         launchPosUpdated = false;
         velocityMag = SHOT_SPEED;
@@ -204,16 +204,21 @@ class ExecuteShot extends Action {
           
             ball.move();
             
-            if (ball.isDelete) {
-                deleteBalls.add(ball);
-                deleteCount++;
+            if (ball.isDone) {
+                doneCount++;
             }
             
-            if (deleteCount == 1 && !launchPosUpdated) {
+            if (ball.isDelete) {
+                deleteBalls.add(ball);
+            }
+            
+            if (doneCount == 1 && !launchPosUpdated) {
                 // The first ball to land updates
                 // the new launch 'x' position.
                 mainGame.screen.launchPoint.x = ball.location.x;
                 launchPosUpdated = true;
+                ball.isDelete = true;
+                deleteBalls.add(ball);
             }
             
             i++;

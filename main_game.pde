@@ -51,7 +51,7 @@ class MainGame {
          * Load the game state
          */
         level = 10;
-        numBalls = 50;
+        numBalls = 400;
         score = 0;
         coins = 0;
     }
@@ -81,6 +81,7 @@ class MainGame {
          * Generate blocks for the
          * current level
          */
+        int largest = 0;
         int min;
         int max;
         
@@ -89,7 +90,7 @@ class MainGame {
             max = level;
         } else {
             min = 10;
-            max = 25;
+            max = 50;
         }
 
         int gen = int(random(min, max));
@@ -97,7 +98,8 @@ class MainGame {
         float x = 0;
         float y = screen.top + BLOCK_WIDTH;
         for (int i = 1; i <= gen; i++) {
-            Block block = new Block(new PVector(x, y), getBlockValue());
+            int val = getBlockValue();
+            Block block = new Block(new PVector(x, y), val);
             blocks.add(block);
 
             x += BLOCK_WIDTH;
@@ -105,7 +107,17 @@ class MainGame {
                 y += BLOCK_WIDTH;
                 x = 0;
             }
+            
+            if (val > largest) {
+                largest = val;
+            }
         }
+        
+        /*
+        for (Block block : blocks) {
+            block.maxHSB = largest;
+        }
+        */
     }
     
     void display() {

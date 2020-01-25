@@ -34,6 +34,7 @@ void setup() {
     //DEFAULT_TEXT_SIZE = 42 * displayDensity;
     //EXPLODE_PARTICLE_COUNT = 25;
     //EXPLODE_PARTICLE_BWIDTH = 12 * displayDensity;
+    //EXPLODE_ALPHA_CHANGE = 10;
     //
     // PC Settings
     //
@@ -43,8 +44,9 @@ void setup() {
     BLOCK_WIDTH = width / 7.0;
     BLOCK_XY_SPACING = BLOCK_WIDTH * 0.07;
     DEFAULT_TEXT_SIZE = 42 * displayDensity();
-    EXPLODE_PARTICLE_COUNT = 25;
+    EXPLODE_PARTICLE_COUNT = 35;
     EXPLODE_PARTICLE_BWIDTH = 12;
+    EXPLODE_ALPHA_CHANGE = 10;
 
     //
     // Android
@@ -74,7 +76,7 @@ void draw() {
      * Builtin method provided by Processing. This is
      * called on each frame.
      */
-    background(0);  // Set background to black
+    background(60);  // Set background to black
     
     switch(currentState) {
     case START_SCREEN:

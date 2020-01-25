@@ -16,7 +16,7 @@ class Hud {
     
     // The percentage of screen space taken at the top and bottom
     // by the HUD
-    private static final float topSizePercent = 10.0;
+    private static final float topSizePercent = 5.0;
     private static final float bottomSizePercent = 10.0;
     
     private float bottomLine;
@@ -91,7 +91,7 @@ class Hud {
          */
         pushMatrix();
         
-        fill(255);
+        fill(80);
         rect(0,0, width, topHeight);
         rect(0, bottomLine, width, bottomHeight);
 
