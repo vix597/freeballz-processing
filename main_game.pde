@@ -42,7 +42,7 @@ class MainGame {
         
         loadGame();
         
-        hud = new Hud(level, numBalls, score, coins);  
+        hud = new Hud(level, numBalls, score, coins);
         screen = new GameScreen(0, width, hud.getTopLine(), hud.getBottomLine());  // left, right, top, bottom of play area
         launchPointBall = new Ball(screen.launchPoint);  // Pass in the PVector so that if the screen launchPoint is updated, so is this.
         
