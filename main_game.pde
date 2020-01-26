@@ -12,14 +12,14 @@ class MainGame {
     /*
      * This is where the main game logic exists
      */    
+
     private Hud hud;
-    
     private Action action;
     
     // Game screen area
     public GameScreen screen;
 
-    private Ball launchPointBall;
+    public Ball launchPointBall;
     public ShotLine launchLine;
     
     private int level;
@@ -29,12 +29,15 @@ class MainGame {
     
     public ArrayList<Ball> balls;
     public ArrayList<Block> blocks;
-    public ArrayList<Block> deleteBlocks;
+    
+    private ArrayList<Ball> deleteBalls;
+    private ArrayList<Block> deleteBlocks;
         
     MainGame() {
         balls = new ArrayList<Ball>();
         blocks = new ArrayList<Block>();
         deleteBlocks = new ArrayList<Block>();
+        deleteBalls = new ArrayList<Ball>();
         action = null;
         
         loadGame();
@@ -51,7 +54,7 @@ class MainGame {
          * Load the game state
          */
         level = 10;
-        numBalls = 400;
+        numBalls = 1;
         score = 0;
         coins = 0;
     }
@@ -120,6 +123,21 @@ class MainGame {
         */
     }
     
+    void deleteBlock(Block delBlock) {
+        /*
+         * Handle deleting a block and getting the score
+         */
+         hud.scorePoints(delBlock.hitPoints);
+         deleteBlocks.add(delBlock);
+    }
+    
+    void deleteBall(Ball ball) {
+        /*
+         * Handle deleting a ball
+         */
+         deleteBalls.add(ball);
+    }
+    
     void display() {
         /*
          * Called on each iteration of the draw loop
@@ -128,11 +146,12 @@ class MainGame {
  
         action = getAction(action);
         action.display();
-         
-        // Display the balls
-        for (Ball ball: balls) {
-            ball.display();
+                 
+        // Delete any balls that should be deleted
+        for (Ball ball : deleteBalls) {
+            balls.remove(ball);
         }
+        deleteBalls.clear();
         
         // Delete any blocks that should be deleted
         for (Block block : deleteBlocks) {
@@ -140,13 +159,19 @@ class MainGame {
         }
         deleteBlocks.clear();
         
+        // Display the balls
+        for (Ball ball: balls) {
+            ball.display();
+        }
+        
         // Display the blocks
         for (Block block : blocks) {
             block.display();
         }
         
-        // Display the current launch point
+        // Display the current launch point and number of balls
         launchPointBall.display();
+        displayNumBalls();
     }
     
     void handleInput(InputType input) {
@@ -163,5 +188,11 @@ class MainGame {
             action.handleInput(input);
             return;
         }
+    }
+    
+    private void displayNumBalls() {
+        /*
+         * Display the number of balls above the launch point ball
+         */
     }
 }

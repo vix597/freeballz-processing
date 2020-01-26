@@ -184,16 +184,21 @@ class ExecuteShot extends Action {
     }
     
     void actionActive() {
-        ArrayList<Ball> deleteBalls = new ArrayList<Ball>();
+        int deleteCount = 0;
       
         if (mainGame.balls.size() == 0) {
             println("shot complete");
             nextState();
+            return;
         }
         
         if (prevBall != null && prevBall.distTraveled >= reqDist) {
             prevBall = null;
             launchCount++;
+        }
+      
+        if (launchCount == 1) {
+            mainGame.launchPointBall.isVisible = false;
         }
       
         int i = 0;
@@ -208,17 +213,18 @@ class ExecuteShot extends Action {
                 doneCount++;
             }
             
-            if (ball.isDelete) {
-                deleteBalls.add(ball);
-            }
-            
             if (doneCount == 1 && !launchPosUpdated) {
                 // The first ball to land updates
                 // the new launch 'x' position.
                 mainGame.screen.launchPoint.x = ball.location.x;
                 launchPosUpdated = true;
                 ball.isDelete = true;
-                deleteBalls.add(ball);
+                mainGame.launchPointBall.isVisible = true;
+            }
+            
+            if (ball.isDelete) {
+                mainGame.deleteBall(ball);
+                deleteCount++;
             }
             
             i++;
@@ -228,13 +234,8 @@ class ExecuteShot extends Action {
                 break;            
             }
         }
-         
-        for (Ball ball: deleteBalls) {
-            mainGame.balls.remove(ball);
-        }
-        
-        launchCount -= deleteBalls.size();
-        deleteBalls.clear();
+                 
+        launchCount -= deleteCount;
     }
     
     void handleInput(InputType input) {

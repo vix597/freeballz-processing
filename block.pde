@@ -130,7 +130,7 @@ class Block {
         if (explodeFrameCount >= explodeFrames) {
             isDelete = true;
             explodeParticles.clear();
-            mainGame.deleteBlocks.add(this);
+            mainGame.deleteBlock(this);
         }
         
         for (Particle p : explodeParticles) {

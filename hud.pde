@@ -91,9 +91,20 @@ class Hud {
          */
         pushMatrix();
         
+        //
+        // Draw the HUD
+        //
         fill(80);
         rect(0,0, width, topHeight);
         rect(0, bottomLine, width, bottomHeight);
+        
+        //
+        // Current level. Middle top
+        //
+        fill(255);
+        textSize(DEFAULT_TEXT_SIZE);
+        textAlign(CENTER, CENTER);
+        text(str(level), width / 2, topLine / 2);
 
         popMatrix();
     }

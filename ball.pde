@@ -15,6 +15,7 @@ class Ball {
 
     public boolean isDelete;
     public boolean isDone;
+    public boolean isVisible;
     public boolean fired;
     public float distTraveled;
 
@@ -31,6 +32,7 @@ class Ball {
         isDelete = false;
         isDone = false;
         fired = false;
+        isVisible = true;
         distTraveled = 0;
     }
     
@@ -44,6 +46,7 @@ class Ball {
        isDelete = false;
        fired = false;
        isDone = false;
+       isVisible = true;
        distTraveled = 0;
     }
         
@@ -52,7 +55,7 @@ class Ball {
          * Called from the main draw method. Used to display the ball
          * on the screen.
          */
-        if (isDelete) {
+        if (isDelete || !isVisible) {
             return;
         }
 
