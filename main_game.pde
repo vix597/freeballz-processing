@@ -54,7 +54,7 @@ class MainGame {
          * Load the game state
          */
         level = 10;
-        numBalls = 1;
+        numBalls = 10;
         score = 0;
         coins = 0;
     }
@@ -194,5 +194,25 @@ class MainGame {
         /*
          * Display the number of balls above the launch point ball
          */
+        int num = 0;
+                  
+        if (action.action == GameAction.EXECUTING_SHOT && action.state == GameActionState.ACTION_ACTIVE) {
+            ExecuteShot execShotAction = (ExecuteShot)action;
+            num = numBalls - execShotAction.launchCount;
+        } else {
+            num = numBalls;
+        }
+        
+        if (num <= 0) {
+            return;
+        }
+
+        String message = "x" + str(num);
+        
+        pushMatrix();
+        fill(255);
+        textAlign(CENTER);
+        text(message, launchPointBall.location.x, (launchPointBall.location.y - (BALL_RADIUS * 2)));
+        popMatrix();
     }
 }

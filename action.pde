@@ -156,9 +156,10 @@ class ExecuteShot extends Action {
     private PVector velocity;
     private boolean launchPosUpdated;
     private int doneCount;
-    private int launchCount;
     private float velocityMag;
     private Ball prevBall;
+    
+    public int launchCount;
     
     ExecuteShot() {
         super(GameAction.EXECUTING_SHOT);
@@ -262,7 +263,6 @@ class ChangeLevel extends Action {
     }
     
     void actionStart() {
-        
         nextState();
     }
     
