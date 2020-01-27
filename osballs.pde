@@ -29,7 +29,8 @@ void setup() {
     //BALL_RADIUS = width * 0.02;
     //SHOT_SPEED = 7 * displayDensity;
     //BLOCK_FONT = 28 * displayDensity;
-    //BLOCK_WIDTH = width / 7.0;
+    //BLOCK_COLUMNS = 7;
+    //BLOCK_WIDTH = width / BLOCK_COLUMNS;
     //BLOCK_XY_SPACING = BLOCK_WIDTH * 0.07;
     //DEFAULT_TEXT_SIZE = 42 * displayDensity;
     //EXPLODE_PARTICLE_COUNT = 25;
@@ -41,7 +42,8 @@ void setup() {
     BALL_RADIUS = width * 0.02;
     SHOT_SPEED = 7 * displayDensity();
     BLOCK_FONT = 28 * displayDensity();
-    BLOCK_WIDTH = width / 7.0;
+    BLOCK_COLUMNS = 7;
+    BLOCK_WIDTH = width / BLOCK_COLUMNS;
     BLOCK_XY_SPACING = BLOCK_WIDTH * 0.07;
     DEFAULT_TEXT_SIZE = 42 * displayDensity();
     EXPLODE_PARTICLE_COUNT = 35;

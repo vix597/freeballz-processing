@@ -19,6 +19,7 @@ class Ball {
     public boolean fired;
     public float distTraveled;
 
+    private color col;
     private PVector velocity;  // Location for an ellipse is the center of the ellipse.
     private PVector location;
     
@@ -34,6 +35,7 @@ class Ball {
         fired = false;
         isVisible = true;
         distTraveled = 0;
+        col = color(255);
     }
     
     Ball(float x, float y) {
@@ -48,8 +50,9 @@ class Ball {
        isDone = false;
        isVisible = true;
        distTraveled = 0;
+       col = color(255);
     }
-        
+    
     void display() {
         /*
          * Called from the main draw method. Used to display the ball
@@ -60,7 +63,7 @@ class Ball {
         }
 
         pushMatrix();
-        fill(255);
+        fill(col);
         ellipse(location.x, location.y, (BALL_RADIUS * 2), (BALL_RADIUS * 2));
         popMatrix();
     }

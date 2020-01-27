@@ -43,3 +43,4 @@ float EXPLODE_PARTICLE_BWIDTH;  // An explosion particle is also a square. What'
 float BLOCK_XY_SPACING;         // The whitespace between the blocks
 float BLOCK_FONT;               // Size of font on a block
 float DEFAULT_TEXT_SIZE;        // Size of the rest of the text (for now. TODO - this will probably go away or change)
+int BLOCK_COLUMNS;              // Number of columns for blocks

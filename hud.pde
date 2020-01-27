@@ -24,10 +24,10 @@ class Hud {
     private float topHeight;
     private float bottomHeight;
     
-    private int level;
-    private int numBalls;
-    private int score;
-    private int coins;
+    public int level;
+    public int numBalls;
+    public int score;
+    public int coins;
     
     Hud(int _level, int _numBalls, int _score, int _coins) {
       level = _level;
@@ -54,35 +54,6 @@ class Hud {
          * Return the top of the bottom of the HUD
          */
         return bottomLine;
-    }
-    
-    void nextLevel() {
-        /*
-         * Called when the player moves to the next level
-         */
-        level++;
-    }
-    
-    void collectCoin() {
-        /*
-         * Called when the player collects a coin
-         */
-        coins++;
-    }
-    
-    void scorePoints(int points) {
-        /*
-         * Called when the player destroys a block
-         * to collect the points for the block
-         */
-        score += points;
-    }
-    
-    void collectBall() {
-        /*
-         * Called when the player collects another ball
-         */
-        numBalls++;
     }
         
     void display() {

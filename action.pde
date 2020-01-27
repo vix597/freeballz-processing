@@ -175,7 +175,7 @@ class ExecuteShot extends Action {
         velocity = mainGame.launchLine.getDistVec();
         velocity.setMag(SHOT_SPEED);
         
-        for (int i = 0; i < mainGame.numBalls; i++) {
+        for (int i = 0; i < mainGame.hud.numBalls; i++) {
             Ball ball = new Ball(mainGame.screen.launchPoint.x, mainGame.screen.launchPoint.y);
             ball.setVelocity(velocity);
             mainGame.balls.add(ball);
@@ -263,10 +263,18 @@ class ChangeLevel extends Action {
     }
     
     void actionStart() {
+        /*
+         * Increment the level
+         */
+        mainGame.hud.level++;
+        println("Moving to level: ", mainGame.hud.level);
         nextState();
     }
     
     void actionActive() {
+        /*
+         * Execute the level change animation and generate blocks
+         */
         nextState();
     }
 }
