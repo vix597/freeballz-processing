@@ -21,7 +21,7 @@ class World {
     private ArrayList<Coin> deleteCoins;
     private ArrayList<Ball> deleteNewBalls;
     
-    private PVector slideVelocity;
+    private float slideVelocity;
     private boolean slide;
     private float pixelsMoved;
     
@@ -32,7 +32,7 @@ class World {
         deleteBlocks = new ArrayList<Block>();
         deleteCoins = new ArrayList<Coin>();
         deleteNewBalls = new ArrayList<Ball>();
-        slideVelocity = new PVector(0, 5);
+        slideVelocity = SLIDE_VELOCITY;
         slide = false;
         pixelsMoved = 0;
     }
@@ -78,28 +78,32 @@ class World {
     }
     
     void slideBlocksDown() {
-        for (Block block : blocks) {
-            block.slide(slideVelocity.y);
-        }
-        pixelsMoved += slideVelocity.y;
-        
-        if (pixelsMoved == BLOCK_WIDTH) {
-            pixelsMoved = 0;
+        float moveAmount = 0;
+        float potentialMove = pixelsMoved + slideVelocity;
+      
+        if (potentialMove == BLOCK_WIDTH) {
+            moveAmount = slideVelocity;
             slide = false;
-        } else if (pixelsMoved > BLOCK_WIDTH) {
-            float diff = pixelsMoved - BLOCK_WIDTH;
-            for (Block block : blocks) {
-                block.slide(diff * -1);  // Adjust
-            }
+        } else if (potentialMove < BLOCK_WIDTH) {
+            moveAmount = slideVelocity;
+        } else {
+            moveAmount = slideVelocity - BLOCK_WIDTH;  // Ensure we don't go too far
+            slide = false;
+        }
+        
+        for (Block block : blocks) {
+            block.slide(moveAmount);
             
-            slide = false;
-            pixelsMoved = 0;
-        }
-        
-        for (Block block : blocks) {
-            if (block.location.y >= ENGINE.hud.bottomLine) {
+            // Check for game over
+            if (block.bottom >= ENGINE.hud.bottomLine) {
                 println("GAME OVER!!!!!");
             }
+        }
+        
+        if (slide) {
+            pixelsMoved += moveAmount;
+        } else {
+            pixelsMoved = 0;  // Reset if we're done.
         }
     }
     
