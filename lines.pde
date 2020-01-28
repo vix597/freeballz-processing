@@ -53,6 +53,7 @@ class ShotLine {
      * Handles drawing a line. Supports collision detection with blocks.
      * and maintains a direction with vectors.
      */
+    
     public Line line;
     private PVector distVec;
      
@@ -60,7 +61,7 @@ class ShotLine {
         line = new Line(startX, startY, endX, endY);
         extendLine();  // Recalulates endPoint appropriately
         
-        for (Block block : mainGame.blocks) {
+        for (Block block : ENGINE.world.blocks) {
             if (!block.isDelete) {
                 checkCollision(block);  // Recalculates endPoint appropriately
             }
@@ -70,7 +71,7 @@ class ShotLine {
     }
     
     void display() {
-        for (Block block : mainGame.blocks) {
+        for (Block block : ENGINE.world.blocks) {
             if (!block.isDelete) {
                 checkCollision(block);
             }
@@ -131,7 +132,7 @@ class ShotLine {
         float y1 = line.endPoint.y;
         
         if (x == x1) {
-            line.endPoint = new PVector(x1, mainGame.screen.top);
+            line.endPoint = new PVector(x1, ENGINE.screen.top);
         } else {
             // Otherwise the line is at an angle and we need to do maths
             // m = (y - y1)/(x - x1)
@@ -143,20 +144,20 @@ class ShotLine {
             float newX;
             float newY;
             if (y > y1) {
-                newX = (mainGame.screen.top - b) / m;
-                newY = mainGame.screen.top;
+                newX = (ENGINE.screen.top - b) / m;
+                newY = ENGINE.screen.top;
             } else {
-                newX = (mainGame.screen.bottom - b) / m;
-                newY = mainGame.screen.bottom;
+                newX = (ENGINE.screen.bottom - b) / m;
+                newY = ENGINE.screen.bottom;
             }
 
             if (newX < 0) {
                 // The line is going off the left of the screen
                 newX = 0;
                 newY = b;
-            } else if (newX > mainGame.screen.right) {
+            } else if (newX > ENGINE.screen.right) {
                 // The line is going off the right of the screen
-                newX = mainGame.screen.right;
+                newX = ENGINE.screen.right;
                 newY = (m * newX) + b;
             }
             
@@ -196,8 +197,8 @@ class ShotLines {
         lines.clear();  // This is called in display, so clear on each call.
          
         ShotLine prevLine = new ShotLine(
-            mainGame.screen.launchPoint.x,
-            mainGame.screen.launchPoint.y,
+            ENGINE.screen.launchPoint.x,
+            ENGINE.screen.launchPoint.y,
             mouseX,
             mouseY
         );
@@ -205,7 +206,7 @@ class ShotLines {
         lines.add(prevLine);  // We always get at least 1 line.
     
         for (int i = 0; i < numLines; i++) {
-            if (prevLine.line.endPoint.y == mainGame.screen.bottom) {
+            if (prevLine.line.endPoint.y == ENGINE.screen.bottom) {
                 break;  // Balls end at the bottom of the screen
             }
             
@@ -215,7 +216,7 @@ class ShotLines {
             
             PVector distVec = prevLine.getDistVec();
             
-            if (prevLine.line.endPoint.x == mainGame.screen.left || prevLine.line.endPoint.x == mainGame.screen.right) {
+            if (prevLine.line.endPoint.x == ENGINE.screen.left || prevLine.line.endPoint.x == ENGINE.screen.right) {
                 distVec.x *= -1;
             } else {
                 distVec.y *= -1;

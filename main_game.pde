@@ -21,71 +21,19 @@ class MainGame {
     public World world;
     
     public ArrayList<Ball> balls;
-    public ArrayList<Block> blocks;
-    public ArrayList<Coin> coins;
-    public ArrayList<Ball> newBalls;
-    
     private ArrayList<Ball> deleteBalls;
-    private ArrayList<Block> deleteBlocks;
-    private ArrayList<Coin> deleteCoins;
-    private ArrayList<Ball> deleteNewBalls;
         
     MainGame() {
         balls = new ArrayList<Ball>();
-        blocks = new ArrayList<Block>();
-        coins = new ArrayList<Coin>();
-        newBalls = new ArrayList<Ball>();
-        deleteBlocks = new ArrayList<Block>();
         deleteBalls = new ArrayList<Ball>();
-        deleteCoins = new ArrayList<Coin>();
-        deleteNewBalls = new ArrayList<Ball>();
         action = null;
         
-        loadGame();
-        
-        screen = new GameScreen(0, width, hud.getTopLine(), hud.getBottomLine());  // left, right, top, bottom of play area
+        hud = new Hud();
+        screen = new GameScreen(0, width, hud.topLine, hud.bottomLine);  // left, right, top, bottom of play area
         launchPointBall = new Ball(screen.launchPoint);  // Pass in the PVector so that if the screen launchPoint is updated, so is this.
-        world = new World(this);
-        world.generateBlocks();
+        world = new World();
     }
-    
-    void loadGame() {
-        /*
-         * Load the game state
-         */
-        hud = new Hud(1, 1, 0, 0);
-    }
-    
-    void saveGame() {
-        /*
-         * Called to save the current game state
-         */
-        // TODO
-    }
-    
-    void deleteNewBall(Ball delNewBall) {
-        /*
-         * Handle deleting a collectible ball
-         */
-         hud.numBalls++;
-         deleteNewBalls.add(delNewBall);
-    }
-    
-    void deleteCoin(Coin delCoin) {
-        /*
-         * Handle deleting a coin
-         */
-        hud.coins++;
-        deleteCoins.add(delCoin);
-    }
-    
-    void deleteBlock(Block delBlock) {
-        /*
-         * Handle deleting a block
-         */
-         deleteBlocks.add(delBlock);
-    }
-    
+        
     void deleteBall(Ball ball) {
         /*
          * Handle deleting a ball
@@ -99,7 +47,7 @@ class MainGame {
          */
         hud.display();
  
-        action = getAction(action);
+        action = getAction(this, action);
         action.display();
                  
         // Delete any balls that should be deleted
@@ -108,43 +56,13 @@ class MainGame {
         }
         deleteBalls.clear();
         
-        // Delete any collectible balls that should be deleted
-        for (Ball ball : deleteNewBalls) {
-            newBalls.remove(ball);
-        }
-        deleteNewBalls.clear();
-        
-        // Delete any coins that should be deleted
-        for (Coin coin : deleteCoins) {
-            coins.remove(coin);
-        }
-        deleteCoins.clear();
-        
-        // Delete any blocks that should be deleted
-        for (Block block : deleteBlocks) {
-            blocks.remove(block);
-        }
-        deleteBlocks.clear();
-        
         // Display the balls
         for (Ball ball : balls) {
             ball.display();
         }
         
-        // Display collectible balls
-        for (Ball ball : newBalls) {
-            ball.display();
-        }
- 
-        // Display coins
-        for (Coin coin : coins) {
-            coin.display();
-        }
-        
-        // Display the blocks
-        for (Block block : blocks) {
-            block.display();
-        }
+        // Display the world items (blocks and collectibles)
+        world.display();
         
         // Display the current launch point and number of balls
         launchPointBall.display();

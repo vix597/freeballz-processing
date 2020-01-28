@@ -22,9 +22,9 @@ enum GameActionState {
 }
 
 
-Action getAction(Action currentAction) {
+Action getAction(MainGame game, Action currentAction) {
     if (currentAction == null) {
-        return new PrepareShot();
+        return new PrepareShot(game);
     }
     
     if (currentAction.state != GameActionState.ACTION_COMPLETE) {
@@ -33,14 +33,14 @@ Action getAction(Action currentAction) {
     
     switch(currentAction.action) {
     case PREPARE_SHOT:
-        return new ExecuteShot();
+        return new ExecuteShot(game);
     case EXECUTING_SHOT:
-        return new ChangeLevel();
+        return new ChangeLevel(game);
     case CHANGE_LEVEL:
-        return new PrepareShot();
+        return new PrepareShot(game);
     }
     
-    return new PrepareShot();
+    return new PrepareShot(game);
 }
 
 
@@ -51,8 +51,9 @@ abstract class Action {
     public final GameAction action;
     protected GameActionState state;
     protected boolean isTouching;
+    protected MainGame engine;
 
-    Action(GameAction a) {
+    Action(MainGame game, GameAction a) {
         action = a;
         state = GameActionState.ACTION_START;
         isTouching = false;
@@ -113,8 +114,8 @@ class PrepareShot extends Action {
     
     private ShotLines shotLines;
     
-    PrepareShot() {
-        super(GameAction.PREPARE_SHOT);
+    PrepareShot(MainGame game) {
+        super(game, GameAction.PREPARE_SHOT);
         
         // Initialize our handler for shot lines
         if (DEBUG) {
@@ -128,7 +129,7 @@ class PrepareShot extends Action {
     
     void actionActive() {
         // Handle aiming
-        if (mouseY < mainGame.screen.launchY) {              
+        if (mouseY < ENGINE.screen.launchY) {              
             shotLines.display();
         }
     }
@@ -141,7 +142,7 @@ class PrepareShot extends Action {
         
         if (!isTouching && state == GameActionState.ACTION_ACTIVE) {
             // Release
-            mainGame.launchLine = shotLines.lines.get(0);
+            ENGINE.launchLine = shotLines.lines.get(0);
             nextState();
         }
     }
@@ -161,8 +162,8 @@ class ExecuteShot extends Action {
     
     public int launchCount;
     
-    ExecuteShot() {
-        super(GameAction.EXECUTING_SHOT);
+    ExecuteShot(MainGame game) {
+        super(game, GameAction.EXECUTING_SHOT);
         velocity = null;
         prevBall = null;
         doneCount = 0;
@@ -172,13 +173,13 @@ class ExecuteShot extends Action {
     }
     
     void actionStart() {
-        velocity = mainGame.launchLine.getDistVec();
+        velocity = ENGINE.launchLine.getDistVec();
         velocity.setMag(SHOT_SPEED);
         
-        for (int i = 0; i < mainGame.hud.numBalls; i++) {
-            Ball ball = new Ball(mainGame.screen.launchPoint.x, mainGame.screen.launchPoint.y);
+        for (int i = 0; i < ENGINE.hud.numBalls; i++) {
+            Ball ball = new Ball(ENGINE.screen.launchPoint.x, ENGINE.screen.launchPoint.y);
             ball.setVelocity(velocity);
-            mainGame.balls.add(ball);
+            ENGINE.balls.add(ball);
         }
         
         nextState();
@@ -187,7 +188,7 @@ class ExecuteShot extends Action {
     void actionActive() {
         int deleteCount = 0;
       
-        if (mainGame.balls.size() == 0) {
+        if (ENGINE.balls.size() == 0) {
             println("shot complete");
             nextState();
             return;
@@ -199,11 +200,11 @@ class ExecuteShot extends Action {
         }
       
         if (launchCount == 1) {
-            mainGame.launchPointBall.isVisible = false;
+            ENGINE.launchPointBall.isVisible = false;
         }
       
         int i = 0;
-        for (Ball ball : mainGame.balls) {
+        for (Ball ball : ENGINE.balls) {
             if (!ball.fired) {
                 ball.fire();
             }
@@ -217,14 +218,14 @@ class ExecuteShot extends Action {
             if (doneCount == 1 && !launchPosUpdated) {
                 // The first ball to land updates
                 // the new launch 'x' position.
-                mainGame.screen.launchPoint.x = ball.location.x;
+                ENGINE.screen.launchPoint.x = ball.location.x;
                 launchPosUpdated = true;
                 ball.isDelete = true;
-                mainGame.launchPointBall.isVisible = true;
+                ENGINE.launchPointBall.isVisible = true;
             }
             
             if (ball.isDelete) {
-                mainGame.deleteBall(ball);
+                ENGINE.deleteBall(ball);
                 deleteCount++;
             }
             
@@ -245,7 +246,7 @@ class ExecuteShot extends Action {
         if (input == InputType.TOUCH_END && state == GameActionState.ACTION_ACTIVE) {
             // SPEED UP!
             velocityMag += SHOT_SPEED;
-            for (Ball ball : mainGame.balls) {
+            for (Ball ball : ENGINE.balls) {
                 ball.setVelocityMag(velocityMag);
             }
         }
@@ -258,16 +259,17 @@ class ChangeLevel extends Action {
      * Action to change to the next level.
      */
     
-    ChangeLevel() {
-        super(GameAction.CHANGE_LEVEL);
+    ChangeLevel(MainGame game) {
+        super(game, GameAction.CHANGE_LEVEL);
     }
     
     void actionStart() {
         /*
          * Increment the level
          */
-        mainGame.hud.level++;
-        println("Moving to level: ", mainGame.hud.level);
+        ENGINE.hud.level++;
+        println("Moving to level: ", ENGINE.hud.level);
+        ENGINE.world.generateNewRow();
         nextState();
     }
     

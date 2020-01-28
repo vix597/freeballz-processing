@@ -7,6 +7,7 @@
  *      Author: Sean LaPlante
  */
 
+int TIME = 0;
 boolean DEBUG = true;  // Displays cheat lines and other useful info
 
 enum GameState {
@@ -24,7 +25,7 @@ GameState currentState;
 
 StartScreen startScreen;
 
-MainGame mainGame;
+MainGame ENGINE;
 
 
 int FRAME_RATE = 90;
@@ -44,3 +45,28 @@ float BLOCK_XY_SPACING;         // The whitespace between the blocks
 float BLOCK_FONT;               // Size of font on a block
 float DEFAULT_TEXT_SIZE;        // Size of the rest of the text (for now. TODO - this will probably go away or change)
 int BLOCK_COLUMNS;              // Number of columns for blocks
+float HUD_TOP_SIZE_PERCENT;     // Percentage of the screen height that should be taken for the top of the HUD
+float HUD_BOTTOM_SIZE_PERCENT;  // Percentage of the screen height that should be taken for the bottom of the HUD
+float SLIDE_VELOCITY;           // y direction velocity for sliding blocks down when the level changes
+
+
+void startTimer() {
+    /*
+     * Used to profile the program when DEBUG is true
+     */
+    if (!DEBUG) {
+        return;
+    }
+    TIME = millis();
+}
+
+
+void stopTimer(String func) {
+    /*
+     * Used to profile the program when DEBUG is true
+     */
+    if (!DEBUG) {
+        return;
+    }
+    println(func, ": ", millis() - TIME);
+}

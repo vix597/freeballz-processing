@@ -12,7 +12,6 @@ class Ball {
     /*
      * A ball with velocity, direction, size, and location
      */
-
     public boolean isDelete;
     public boolean isDone;
     public boolean isVisible;
@@ -108,7 +107,7 @@ class Ball {
         location.add(velocity);
         
         checkBoundaryCollision();
-        for (Block block : mainGame.blocks) {
+        for (Block block : ENGINE.world.blocks) {
             if (!block.isDelete && !block.isExplode) {
                 checkCollision(block);
             }
@@ -116,25 +115,25 @@ class Ball {
     }
     
     void checkIsDelete() {
-        if (location.x == mainGame.screen.launchPoint.x) {
+        if (location.x == ENGINE.screen.launchPoint.x) {
             isDelete = true;
             return;
-        } else if (velocity.x < 0 && location.x < mainGame.screen.launchPoint.x) {
+        } else if (velocity.x < 0 && location.x < ENGINE.screen.launchPoint.x) {
             isDelete = true;
             return;
-        } else if (velocity.x > 0 && location.x > mainGame.screen.launchPoint.x) {
+        } else if (velocity.x > 0 && location.x > ENGINE.screen.launchPoint.x) {
             isDelete = true;
             return;
         }
         
-        if (location.x > mainGame.screen.launchPoint.x + (BALL_RADIUS * 2)) {
+        if (location.x > ENGINE.screen.launchPoint.x + (BALL_RADIUS * 2)) {
             velocity.x = BALL_RADIUS * -1;
             location.add(velocity);
-        } else if (location.x < mainGame.screen.launchPoint.x - (BALL_RADIUS * 2)) {
+        } else if (location.x < ENGINE.screen.launchPoint.x - (BALL_RADIUS * 2)) {
             velocity.x = BALL_RADIUS;
             location.add(velocity);
         } else {
-            location.x = mainGame.screen.launchPoint.x;
+            location.x = ENGINE.screen.launchPoint.x;
         }
     }
     
@@ -146,19 +145,19 @@ class Ball {
             return;
         }
          
-        if (location.x > mainGame.screen.right - BALL_RADIUS) {
-          location.x = mainGame.screen.right - BALL_RADIUS;
+        if (location.x > ENGINE.screen.right - BALL_RADIUS) {
+          location.x = ENGINE.screen.right - BALL_RADIUS;
           velocity.x *= -1;
         } else if (location.x < BALL_RADIUS) {
           location.x = BALL_RADIUS;
           velocity.x *= -1;
-        } else if (location.y > mainGame.screen.bottom - BALL_RADIUS) {
+        } else if (location.y > ENGINE.screen.bottom - BALL_RADIUS) {
           isDone = true;
           velocity.y = 0;
           velocity.x = 0;
-          location.y = mainGame.screen.launchPoint.y;
-        } else if (location.y < mainGame.screen.top + BALL_RADIUS) {
-          location.y = mainGame.screen.top + BALL_RADIUS;
+          location.y = ENGINE.screen.launchPoint.y;
+        } else if (location.y < ENGINE.screen.top + BALL_RADIUS) {
+          location.y = ENGINE.screen.top + BALL_RADIUS;
           velocity.y *= -1;
         }
     }

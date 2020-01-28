@@ -12,48 +12,25 @@ class Hud {
     /*
      * A class to handle the game's heads up display.
      * This will show current level, score, and other info
-     */
-    
-    // The percentage of screen space taken at the top and bottom
-    // by the HUD
-    private static final float topSizePercent = 5.0;
-    private static final float bottomSizePercent = 10.0;
-    
-    private float bottomLine;
-    private float topLine;
-    private float topHeight;
-    private float bottomHeight;
-    
+     */    
+    public float bottomLine;
+    public float topLine;
+    public float topHeight;
+    public float bottomHeight;
     public int level;
     public int numBalls;
-    public int score;
     public int coins;
     
-    Hud(int _level, int _numBalls, int _score, int _coins) {
-      level = _level;
-      numBalls = _numBalls;
-      score = _score;
-      coins = _coins;
+    Hud() {
+      level = 1;
+      numBalls = 1;
+      coins = 0;
       
-      topHeight = int(height * (topSizePercent / 100.0));
-      bottomHeight = int(height * (bottomSizePercent / 100.0));
+      topHeight = int(height * (HUD_TOP_SIZE_PERCENT / 100.0));
+      bottomHeight = int(height * (HUD_BOTTOM_SIZE_PERCENT / 100.0));
       
       topLine = topHeight;
       bottomLine = height - bottomHeight;
-    }
-    
-    float getTopLine() {
-        /*
-         * Return the bottom of the top of the HUD
-         */
-        return topLine;
-    }
-    
-    float getBottomLine() {
-        /*
-         * Return the top of the bottom of the HUD
-         */
-        return bottomLine;
     }
         
     void display() {
@@ -61,6 +38,8 @@ class Hud {
          * Called on each draw loop to display the HUD
          */
         pushMatrix();
+        
+        noStroke();
         
         //
         // Draw the HUD
@@ -101,5 +80,17 @@ class Hud {
          * Called to handle input on the HUD
          */
         println("hud!handleInput: You're touching the HUD!");
+    }
+    
+    void loadGame() {
+        /*
+         * Load the latest save
+         */
+    }
+    
+    void saveGame() {
+        /*
+         * Save the game state
+         */
     }
 }

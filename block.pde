@@ -92,6 +92,13 @@ class Block {
         radius = distVec.mag();
     }
     
+    void slide(float amount) {
+        location.y += amount;
+        top += amount;
+        bottom += amount;
+        middle.y += amount;
+    }
+    
     void display() {
         /*
          * Called from the main draw method. Used to display the block
@@ -130,7 +137,7 @@ class Block {
         if (explodeFrameCount >= explodeFrames) {
             isDelete = true;
             explodeParticles.clear();
-            mainGame.deleteBlock(this);
+            ENGINE.world.deleteBlock(this);
         }
         
         for (Particle p : explodeParticles) {
