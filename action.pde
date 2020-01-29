@@ -153,7 +153,7 @@ class ExecuteShot extends Action {
     /*
      * Action to execute a shot.
      */
-    private float reqDist = BALL_RADIUS * 4;
+    private float reqDist = BALL_RADIUS * 5;
     private PVector velocity;
     private boolean launchPosUpdated;
     private int doneCount;

@@ -7,7 +7,31 @@
  * Created on: January 12, 2020
  *     Author: Sean LaPlante
  */
- 
+
+
+class WorldObject {
+    /*
+     * An object that's displayed in the world as part of the level
+     * may be a block, collectible ball, or coin or other powerup
+     */
+    protected boolean isCollectible;
+    public PVector location;
+    
+    WorldObject(float x, float y, boolean collect) {
+        location = new PVector(x, y);
+        isCollectible = collect;
+    }
+    
+    WorldObject(PVector loc, boolean collect) {
+        location = loc;
+        isCollectible = collect;
+    }
+    
+    void slide(float amount) {
+        location.y += amount;
+    }
+}
+
 
 class World {
     /*
@@ -15,11 +39,11 @@ class World {
      */    
     public ArrayList<Block> blocks;
     public ArrayList<Coin> coins;
-    public ArrayList<Ball> newBalls;
+    public ArrayList<PickupBall> pickupBalls;
     
     private ArrayList<Block> deleteBlocks;
     private ArrayList<Coin> deleteCoins;
-    private ArrayList<Ball> deleteNewBalls;
+    private ArrayList<PickupBall> deletePickupBalls;
     
     private float slideVelocity;
     private boolean slide;
@@ -28,10 +52,10 @@ class World {
     World() {
         blocks = new ArrayList<Block>();
         coins = new ArrayList<Coin>();
-        newBalls = new ArrayList<Ball>();
+        pickupBalls = new ArrayList<PickupBall>();
         deleteBlocks = new ArrayList<Block>();
         deleteCoins = new ArrayList<Coin>();
-        deleteNewBalls = new ArrayList<Ball>();
+        deletePickupBalls = new ArrayList<PickupBall>();
         slideVelocity = SLIDE_VELOCITY;
         slide = false;
         pixelsMoved = 0;
@@ -39,10 +63,10 @@ class World {
     
     void display() {
         // Delete any collectible balls that should be deleted
-        for (Ball ball : deleteNewBalls) {
-            newBalls.remove(ball);
+        for (PickupBall ball : deletePickupBalls) {
+            pickupBalls.remove(ball);
         }
-        deleteNewBalls.clear();
+        deletePickupBalls.clear();
         
         // Delete any coins that should be deleted
         for (Coin coin : deleteCoins) {
@@ -57,7 +81,7 @@ class World {
         deleteBlocks.clear();
         
         // Display collectible balls
-        for (Ball ball : newBalls) {
+        for (PickupBall ball : pickupBalls) {
             ball.display();
         }
  
@@ -89,6 +113,16 @@ class World {
         } else {
             moveAmount = slideVelocity - BLOCK_WIDTH;  // Ensure we don't go too far
             slide = false;
+        }
+        
+        for (Coin coin : coins) {
+            coin.slide(moveAmount);
+            // TODO - Detect coin at bottom and delete it
+        }
+
+        for (PickupBall ball : pickupBalls) {
+            ball.slide(moveAmount);
+            // TODO - Detect ball at bottom and delete it
         }
         
         for (Block block : blocks) {
@@ -125,12 +159,23 @@ class World {
         /*
          * Generatea new row of blocks
          */
+        boolean generatedCoin = false;
+        boolean generatedPickupBall = false;
         int num = int(random(1, BLOCK_COLUMNS)); 
         float x = 0;
         float y = ENGINE.screen.top;
 
         for (int i = 0; i < BLOCK_COLUMNS && num > 0; i++) {
             if (int(random(2)) == 0 && (BLOCK_COLUMNS - i) > num) {
+                if (!generatedPickupBall && ENGINE.hud.level > 1) {
+                    // Need one of these per level (except level 1)
+                    pickupBalls.add(new PickupBall(x + (BLOCK_WIDTH / 2), y + (BLOCK_WIDTH / 2)));
+                    generatedPickupBall = true;
+                } else if (!generatedCoin) {
+                    // Chance of one coin per level
+                    coins.add(new Coin(x + (BLOCK_WIDTH / 2), y + (BLOCK_WIDTH / 2)));
+                    generatedCoin = true;
+                }
                 x += BLOCK_WIDTH;
             } else {
                 int val = getBlockValue();
@@ -141,15 +186,23 @@ class World {
             }
         }
         
+        if (!generatedPickupBall && ENGINE.hud.level > 1) {
+            // Make sure we generated a pickup ball (except level 1)
+            pickupBalls.add(new PickupBall(x + (BLOCK_WIDTH / 2), y + (BLOCK_WIDTH / 2)));
+        } else if (!generatedCoin && int(random(2)) == 0) {
+            // Chance of coin in last slot
+            coins.add(new Coin(x + (BLOCK_WIDTH / 2), y + (BLOCK_WIDTH / 2)));
+        }
+        
         slide = true;
     }
     
-    void deleteNewBall(Ball delNewBall) {
+    void deletePickupBall(PickupBall delNewBall) {
         /*
          * Handle deleting a collectible ball
          */
          ENGINE.hud.numBalls++;
-         deleteNewBalls.add(delNewBall);
+         deletePickupBalls.add(delNewBall);
     }
     
     void deleteCoin(Coin delCoin) {

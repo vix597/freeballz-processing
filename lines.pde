@@ -42,6 +42,7 @@ class Line {
     void display() {
         pushMatrix();
         stroke(255);
+        strokeWeight(1);
         line(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
         popMatrix();
     }

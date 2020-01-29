@@ -26,7 +26,7 @@ void setup() {
     //
     // Android Settings
     //
-    //SHOT_SPEED = 7 * displayDensity;
+    //SHOT_SPEED = 8 * displayDensity;
     //BLOCK_FONT = 28 * displayDensity;
     //DEFAULT_TEXT_SIZE = 42 * displayDensity;
     //EXPLODE_PARTICLE_BWIDTH = 12 * displayDensity;
@@ -34,7 +34,7 @@ void setup() {
     //
     // PC Settings
     //
-    SHOT_SPEED = 7 * displayDensity();
+    SHOT_SPEED = 8 * displayDensity();
     BLOCK_FONT = 28 * displayDensity();
     DEFAULT_TEXT_SIZE = 42 * displayDensity();
     EXPLODE_PARTICLE_BWIDTH = 12 * displayDensity();

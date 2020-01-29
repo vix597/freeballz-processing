@@ -43,7 +43,7 @@ class Particle {
 }
 
 
-class Block {
+class Block extends WorldObject {
     /*
      * A block with hit points, size, and location
      */
@@ -52,7 +52,6 @@ class Block {
     public float top;           // y position of top of block (same as location.y)
     public float bottom;        // y position of bottom of block (same as location.y + bWidth)
     public float radius;        // the distance from the middle to a corner
-    public PVector location;    // x, y coords of top left corner of block
     public PVector middle;      // x, y coords of the middle of the block
     public float bWidth;        // Width and height of block (it's a square)
     public int hitPoints;       // Number of points this block is worth
@@ -69,9 +68,9 @@ class Block {
     private float maxHSB;                          // Max for hue saturation brightness
     
     Block(PVector loc, int points) {
+        super(loc, false);
         explodeFrames = int(FRAME_RATE / 3.0);
         bWidth = BLOCK_WIDTH;
-        location = loc;
         hitPoints = points;
         remHitPoints = points;
         left = location.x;
@@ -93,7 +92,7 @@ class Block {
     }
     
     void slide(float amount) {
-        location.y += amount;
+        super.slide(amount);
         top += amount;
         bottom += amount;
         middle.y += amount;
@@ -161,10 +160,10 @@ class Block {
          * Display the block
          */
         pushMatrix();
+        noStroke();
         colorMode(HSB, maxHSB, maxHSB, 100);
         fill(getColor());
         colorMode(RGB, 255, 255, 255);
-        stroke(100);
         
         // We want to display the block in the middle of the hit box
         // and a little smaller so that it looks like there are gaps

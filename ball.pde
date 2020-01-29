@@ -8,6 +8,31 @@
  */
 
 
+class PickupBall extends WorldObject {
+    /*
+     * A new ball that can be collected
+     */
+    
+    PickupBall(float x, float y) {
+        super(x, y, true);
+    }
+    
+    void display() {
+        pushMatrix();
+        
+        noStroke();
+        fill(255);
+        ellipse(location.x, location.y, BALL_RADIUS * 2, BALL_RADIUS * 2);
+        
+        strokeWeight(5);
+        stroke(255);
+        noFill();
+        ellipse(location.x, location.y, BALL_RADIUS * 3.5, BALL_RADIUS * 3.5);
+        
+        popMatrix();
+    }
+}
+
 class Ball {
     /*
      * A ball with velocity, direction, size, and location
@@ -62,6 +87,7 @@ class Ball {
         }
 
         pushMatrix();
+        noStroke();
         fill(col);
         ellipse(location.x, location.y, (BALL_RADIUS * 2), (BALL_RADIUS * 2));
         popMatrix();

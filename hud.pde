@@ -23,7 +23,7 @@ class Hud {
     
     Hud() {
       level = 1;
-      numBalls = 1;
+      numBalls = 10;
       coins = 0;
       
       topHeight = int(height * (HUD_TOP_SIZE_PERCENT / 100.0));

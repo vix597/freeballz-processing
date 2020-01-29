@@ -8,11 +8,18 @@
  */
  
 
-class Coin {
+class Coin extends WorldObject {
   
-    Coin() {
+    Coin(float x, float y) {
+        super(x, y, true);
     }
     
     void display() {
+        pushMatrix();
+        noFill();
+        stroke(237, 165, 16);
+        strokeWeight(5);
+        ellipse(location.x, location.y, BALL_RADIUS * 3, BALL_RADIUS * 3);
+        popMatrix();
     }
 }
