@@ -22,9 +22,9 @@ enum GameActionState {
 }
 
 
-Action getAction(MainGame game, Action currentAction) {
+Action getAction(Action currentAction) {
     if (currentAction == null) {
-        return new PrepareShot(game);
+        return new PrepareShot();
     }
     
     if (currentAction.state != GameActionState.ACTION_COMPLETE) {
@@ -33,14 +33,14 @@ Action getAction(MainGame game, Action currentAction) {
     
     switch(currentAction.action) {
     case PREPARE_SHOT:
-        return new ExecuteShot(game);
+        return new ExecuteShot();
     case EXECUTING_SHOT:
-        return new ChangeLevel(game);
+        return new ChangeLevel();
     case CHANGE_LEVEL:
-        return new PrepareShot(game);
+        return new PrepareShot();
     }
     
-    return new PrepareShot(game);
+    return new PrepareShot();
 }
 
 
@@ -53,7 +53,7 @@ abstract class Action {
     protected boolean isTouching;
     protected MainGame engine;
 
-    Action(MainGame game, GameAction a) {
+    Action(GameAction a) {
         action = a;
         state = GameActionState.ACTION_START;
         isTouching = false;
@@ -92,6 +92,10 @@ abstract class Action {
         }
     }
     
+    void resetAction() {
+        state = GameActionState.ACTION_START;
+    }
+    
     void handleInput(InputType input) {
         switch(input) {
         case TOUCH_START:
@@ -114,8 +118,8 @@ class PrepareShot extends Action {
     
     private ShotLines shotLines;
     
-    PrepareShot(MainGame game) {
-        super(game, GameAction.PREPARE_SHOT);
+    PrepareShot() {
+        super(GameAction.PREPARE_SHOT);
         
         // Initialize our handler for shot lines
         if (DEBUG) {
@@ -142,8 +146,13 @@ class PrepareShot extends Action {
         
         if (!isTouching && state == GameActionState.ACTION_ACTIVE) {
             // Release
-            ENGINE.launchLine = shotLines.lines.get(0);
-            nextState();
+            if (shotLines.lines.size() > 0) {  // A quick touch could break this.
+                ENGINE.launchLine = shotLines.lines.get(0);
+                nextState();
+            } else {
+                println("WARNING: Touched too fast. Reset!");
+                resetAction();
+            }
         }
     }
 }
@@ -162,8 +171,8 @@ class ExecuteShot extends Action {
     
     public int launchCount;
     
-    ExecuteShot(MainGame game) {
-        super(game, GameAction.EXECUTING_SHOT);
+    ExecuteShot() {
+        super(GameAction.EXECUTING_SHOT);
         velocity = null;
         prevBall = null;
         doneCount = 0;
@@ -259,8 +268,8 @@ class ChangeLevel extends Action {
      * Action to change to the next level.
      */
     
-    ChangeLevel(MainGame game) {
-        super(game, GameAction.CHANGE_LEVEL);
+    ChangeLevel() {
+        super(GameAction.CHANGE_LEVEL);
     }
     
     void actionStart() {

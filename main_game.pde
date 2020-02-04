@@ -47,7 +47,7 @@ class MainGame {
          */
         hud.display();
  
-        action = getAction(this, action);
+        action = getAction(action);
         action.display();
                  
         // Delete any balls that should be deleted

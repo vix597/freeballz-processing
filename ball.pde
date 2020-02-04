@@ -12,9 +12,30 @@ class PickupBall extends WorldObject {
     /*
      * A new ball that can be collected
      */
+     
+    private float left;          // x value of left side of ball (same as location.x - radius)
+    private float right;         // x value of right side of block (same as location.x + radius)
+    private float top;           // y position of top of block (same as location.y - radius)
+    private float bottom;        // y position of bottom of block (same as location.y + radius)
+    private float radius;        // the distance from the middle to the edge of the circle
+    private PVector middle;      // x, y coords of the middle of the ball (same as location)
+    private float bWidth;        // diameter of the ball
     
     PickupBall(float x, float y) {
-        super(x, y, true);
+        super(x, y, true, ObjectType.PICKUP_BALL);
+        bWidth = BALL_RADIUS * 3.5;
+        radius = bWidth / 2.0;
+        left = location.x - radius;
+        right = location.x + radius;
+        top = location.y - radius;
+        bottom = location.y + radius;
+        middle = location;  // Same thing just store ref
+    }
+    
+    void slide(float amount) {
+        super.slide(amount);
+        top += amount;
+        bottom += amount;
     }
     
     void display() {
@@ -27,11 +48,50 @@ class PickupBall extends WorldObject {
         strokeWeight(5);
         stroke(255);
         noFill();
-        ellipse(location.x, location.y, BALL_RADIUS * 3.5, BALL_RADIUS * 3.5);
+        ellipse(location.x, location.y, bWidth, bWidth);
         
         popMatrix();
     }
+    
+    float getLeft() {
+        return left;
+    }
+    
+    float getRight() {
+        return right;
+    }
+    
+    float getTop()  {
+        return top;
+    }
+    
+    float getBottom() {
+        return bottom;
+    }
+    
+    float getRadius() {
+        return radius;
+    }
+    
+    float getWidth() {
+        return bWidth;
+    }
+    
+    PVector getMiddle() {
+        return middle;
+    }
+    
+    void collide() {
+        /*
+         * Called when a ball collides with this object
+         */
+        ENGINE.world.deletePickupBall(this);
+        //
+        // TODO - Animate collecting the ball
+        //
+    }
 }
+
 
 class Ball {
     /*
@@ -132,11 +192,22 @@ class Ball {
         distTraveled += velocity.mag();
         location.add(velocity);
         
+        // Check for collision with the boundary
         checkBoundaryCollision();
+        
+        // Check for collision with objects
         for (Block block : ENGINE.world.blocks) {
             if (!block.isDelete && !block.isExplode) {
                 checkCollision(block);
             }
+        }
+        
+        for (PickupBall ball : ENGINE.world.pickupBalls) {
+            checkCollision(ball);
+        }
+        
+        for (Coin coin : ENGINE.world.coins) {
+            checkCollision(coin);
         }
     }
     
@@ -188,7 +259,7 @@ class Ball {
         }
     }
     
-    void checkCollision(Block other) {
+    void checkCollision(WorldObject other) {
         /*
          * Check for a collision with a block
          */
@@ -197,11 +268,11 @@ class Ball {
         }
       
         // Get distances between the objects
-        PVector distVec = PVector.sub(other.middle, location);  // Location for ellipse is middle
+        PVector distVec = PVector.sub(other.getMiddle(), location);  // Location for ellipse is middle
         float dist = distVec.mag();
     
         // Minimum distance before they are touching
-        float minDistance = BALL_RADIUS + other.radius;
+        float minDistance = BALL_RADIUS + other.getRadius();
     
         if (dist < minDistance) {
             // Collision is impossible until this is true.
@@ -211,42 +282,50 @@ class Ball {
             PVector radiusVec = velocity.setMag(null, BALL_RADIUS);
             PVector edgePoint = PVector.add(location, radiusVec);
             
-            if (location.x > other.right) {
+            if (location.x > other.getRight()) {
                 // ball is on the right of the block
                 edgePoint = new PVector(location.x - BALL_RADIUS, location.y);
                 right = true;
-            } else if (location.x < other.left) {
+            } else if (location.x < other.getLeft()) {
                 // ball is on the left of the block
                 edgePoint = new PVector(location.x + BALL_RADIUS, location.y);
                 left = true;
-            } else if (location.y > other.bottom) {
+            } else if (location.y > other.getBottom()) {
                 // ball is underneith
                 edgePoint = new PVector(location.x, location.y - BALL_RADIUS);
                 below = true;
-            } else if (location.y < other.top) {
+            } else if (location.y < other.getTop()) {
                 // ball is above
                 edgePoint = new PVector(location.x, location.y + BALL_RADIUS);
                 above = true;
             }
             
-            if (edgePoint.x > other.left && edgePoint.x < other.right && edgePoint.y > other.top && edgePoint.y < other.bottom) {
-                if (left || right) {
-                    velocity.x *= -1;
-                } else if (above || below) {
-                    velocity.y *= -1;
+            if (edgePoint.x > other.getLeft() && edgePoint.x < other.getRight() && edgePoint.y > other.getTop() && edgePoint.y < other.getBottom()) {
+                //
+                // We collided - Decide what to do.
+                //
+                
+                if (!other.isCollectible) {
+                    // It's not collectible. Bounce off it.
+                
+                    if (left || right) {
+                        velocity.x *= -1;
+                    } else if (above || below) {
+                        velocity.y *= -1;
+                    }
+                    
+                    if (left) {
+                        location.x = other.getLeft() - BALL_RADIUS;
+                    } else if (right) {
+                        location.x = other.getRight() + BALL_RADIUS;
+                    } else if (above) {
+                        location.y = other.getTop() - BALL_RADIUS;
+                    } else if (below) {
+                        location.y = other.getBottom() + BALL_RADIUS;
+                    }
                 }
                 
-                if (left) {
-                    location.x = other.left - BALL_RADIUS;
-                } else if (right) {
-                    location.x = other.right + BALL_RADIUS;
-                } else if (above) {
-                    location.y = other.top - BALL_RADIUS;
-                } else if (below) {
-                    location.y = other.bottom + BALL_RADIUS;
-                }
-                
-                other.hit();
+                other.collide();
             } 
         }
     }

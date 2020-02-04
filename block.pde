@@ -47,20 +47,21 @@ class Block extends WorldObject {
     /*
      * A block with hit points, size, and location
      */
-    public float left;          // x value of left side of block (same as location.x)
-    public float right;         // x value of right side of block (same as location.x + bWidth)
-    public float top;           // y position of top of block (same as location.y)
-    public float bottom;        // y position of bottom of block (same as location.y + bWidth)
-    public float radius;        // the distance from the middle to a corner
-    public PVector middle;      // x, y coords of the middle of the block
-    public float bWidth;        // Width and height of block (it's a square)
     public int hitPoints;       // Number of points this block is worth
     public int remHitPoints;    // Hit points remaining
     public boolean isDelete;    // Whether or not the block is dead
     public boolean isExplode;   // Whether or not the block is exploding
     public float spacingX;      // Number of pixels to use as spacing to the left and right of the block
     public float spacingY;      // Number of pixels to use as spacing above and below the block
-    
+
+    private float left;          // x value of left side of block (same as location.x)
+    private float right;         // x value of right side of block (same as location.x + bWidth)
+    private float top;           // y position of top of block (same as location.y)
+    private float bottom;        // y position of bottom of block (same as location.y + bWidth)
+    private float radius;        // the distance from the middle to a corner
+    private PVector middle;      // x, y coords of the middle of the block
+    private float bWidth;        // Width and height of block (it's a square)
+
     private int explodeFrames;                     // Number of frames required for explosion
     private int explodeFrameCount;                 // Number of frames executed so far in explode animation
     private ArrayList<Particle> explodeParticles;  // The particles
@@ -68,7 +69,7 @@ class Block extends WorldObject {
     private float maxHSB;                          // Max for hue saturation brightness
     
     Block(PVector loc, int points) {
-        super(loc, false);
+        super(loc, false, ObjectType.BLOCK);
         explodeFrames = int(FRAME_RATE / 3.0);
         bWidth = BLOCK_WIDTH;
         hitPoints = points;
@@ -114,7 +115,35 @@ class Block extends WorldObject {
         displayText();
     }
     
-    void hit() {
+    float getLeft() {
+        return left;
+    }
+    
+    float getRight() {
+        return right;
+    }
+    
+    float getTop()  {
+        return top;
+    }
+    
+    float getBottom() {
+        return bottom;
+    }
+    
+    float getRadius() {
+        return radius;
+    }
+    
+    float getWidth() {
+        return bWidth;
+    }
+    
+    PVector getMiddle() {
+        return middle;
+    }
+    
+    void collide() {
         /*
          * Called when a ball collides with the block
          */

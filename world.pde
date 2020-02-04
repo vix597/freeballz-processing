@@ -9,27 +9,58 @@
  */
 
 
-class WorldObject {
+enum ObjectType {
+    BLOCK,
+    COIN,
+    PICKUP_BALL
+}
+
+
+abstract class WorldObject {
     /*
      * An object that's displayed in the world as part of the level
      * may be a block, collectible ball, or coin or other powerup
      */
-    protected boolean isCollectible;
+
+    public final ObjectType type;
+    public boolean isCollectible;
     public PVector location;
-    
-    WorldObject(float x, float y, boolean collect) {
+        
+    WorldObject(float x, float y, boolean collect, ObjectType _type) {
         location = new PVector(x, y);
         isCollectible = collect;
+        type = _type;
     }
     
-    WorldObject(PVector loc, boolean collect) {
+    WorldObject(PVector loc, boolean collect, ObjectType _type) {
         location = loc;
         isCollectible = collect;
+        type = _type;
     }
     
     void slide(float amount) {
+        /*
+         * Called to slide the object down on
+         * level change
+         */
         location.y += amount;
     }
+    
+    /*
+     * The following abstract methods must be
+     * implemented by all subclasses. Allows
+     * for our collision detection code to be
+     * the same regardless of the object.
+     */
+    public abstract float getLeft();    // Get the left 'x' coord of the object.
+    public abstract float getRight();   // Get the right 'x' coord of the object.
+    public abstract float getTop();     // Get the top 'y' coord of the object.
+    public abstract float getBottom();  // Get the bottom 'y' coord of the object.
+    public abstract float getRadius();  // Get the radius of the object.
+    public abstract float getWidth();  // Get the width (or diameter) of the object.
+    public abstract PVector getMiddle();// Get the middle (x, y) coords of the object.
+    public abstract void collide();  // called when a ball collides with the object.
+    public abstract void display();  // called on each frame to display the object.
 }
 
 
@@ -197,12 +228,12 @@ class World {
         slide = true;
     }
     
-    void deletePickupBall(PickupBall delNewBall) {
+    void deletePickupBall(PickupBall delPickupBall) {
         /*
          * Handle deleting a collectible ball
          */
          ENGINE.hud.numBalls++;
-         deletePickupBalls.add(delNewBall);
+         deletePickupBalls.add(delPickupBall);
     }
     
     void deleteCoin(Coin delCoin) {
