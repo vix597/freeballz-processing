@@ -24,7 +24,7 @@ abstract class WorldObject {
 
     public final ObjectType type;
     public boolean isCollectible;
-    public PVector location;
+    protected PVector location;
         
     WorldObject(float x, float y, boolean collect, ObjectType _type) {
         location = new PVector(x, y);
@@ -111,6 +111,11 @@ class World {
         }
         deleteBlocks.clear();
         
+        // Do we need to slide everything down?
+        if (slide) {
+            slideObjectsDown();
+        }
+        
         // Display collectible balls
         for (PickupBall ball : pickupBalls) {
             ball.display();
@@ -121,18 +126,13 @@ class World {
             coin.display();
         }
         
-        // Do we need to slide the blocks?
-        if (slide) {
-            slideBlocksDown();
-        }
-        
         // Display the blocks
         for (Block block : blocks) {
             block.display();
         }
     }
     
-    void slideBlocksDown() {
+    void slideObjectsDown() {
         float moveAmount = 0;
         float potentialMove = pixelsMoved + slideVelocity;
       
@@ -142,7 +142,7 @@ class World {
         } else if (potentialMove < BLOCK_WIDTH) {
             moveAmount = slideVelocity;
         } else {
-            moveAmount = slideVelocity - BLOCK_WIDTH;  // Ensure we don't go too far
+            moveAmount = potentialMove - BLOCK_WIDTH;  // Ensure we don't go too far
             slide = false;
         }
         
