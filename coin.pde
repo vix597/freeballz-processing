@@ -23,8 +23,8 @@ class Coin extends WorldObject {
   
     Coin(float x, float y) {
         super(x, y, true, ObjectType.COIN);
-        bWidth = BALL_RADIUS * 3.0;
-        radius = bWidth / 2.0;
+        bWidth = COIN_RADIUS * 2.0;
+        radius = COIN_RADIUS;
         left = location.x - radius;
         right = location.x + radius;
         top = location.y - radius;

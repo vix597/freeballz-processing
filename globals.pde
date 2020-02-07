@@ -36,6 +36,8 @@ int FRAME_RATE = 90;
 // These are set in setup()
 //
 float BALL_RADIUS;              // The radius of the game ball
+float PICKUP_BALL_RADIUS;       // The radius of the ring around pickup balls
+float COIN_RADIUS;              // The radius of a coin
 float SHOT_SPEED;               // The speed the ball travels for a shot
 float BLOCK_WIDTH;              // The width of a game block
 int EXPLODE_PARTICLE_COUNT;     // Number of particles a block turns into when it explodes
@@ -43,7 +45,8 @@ int EXPLODE_ALPHA_CHANGE;       // Rate of change for the alpha of an explostion
 float EXPLODE_PARTICLE_BWIDTH;  // An explosion particle is also a square. What's its width and height?
 float BLOCK_XY_SPACING;         // The whitespace between the blocks
 float BLOCK_FONT;               // Size of font on a block
-float DEFAULT_TEXT_SIZE;        // Size of the rest of the text (for now. TODO - this will probably go away or change)
+float DEFAULT_TEXT_SIZE;        // Size of the rest of the text
+float SMALL_TEXT_SIZE;          // Size of small text
 int BLOCK_COLUMNS;              // Number of columns for blocks
 float HUD_TOP_SIZE_PERCENT;     // Percentage of the screen height that should be taken for the top of the HUD
 float HUD_BOTTOM_SIZE_PERCENT;  // Percentage of the screen height that should be taken for the bottom of the HUD

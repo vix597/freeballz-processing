@@ -23,8 +23,8 @@ class PickupBall extends WorldObject {
     
     PickupBall(float x, float y) {
         super(x, y, true, ObjectType.PICKUP_BALL);
-        bWidth = BALL_RADIUS * 3.5;
-        radius = bWidth / 2.0;
+        bWidth = PICKUP_BALL_RADIUS * 2;
+        radius = PICKUP_BALL_RADIUS;
         left = location.x - radius;
         right = location.x + radius;
         top = location.y - radius;
@@ -43,7 +43,7 @@ class PickupBall extends WorldObject {
         
         noStroke();
         fill(255);
-        ellipse(location.x, location.y, BALL_RADIUS * 2, BALL_RADIUS * 2);
+        ellipse(location.x, location.y, (BALL_RADIUS * 2), (BALL_RADIUS * 2));
         
         strokeWeight(5);
         stroke(255);

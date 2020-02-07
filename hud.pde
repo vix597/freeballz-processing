@@ -24,13 +24,29 @@ class Hud {
     Hud() {
       level = 1;
       numBalls = 1;
-      coins = 0;
+      coins = 99;
       
       topHeight = int(height * (HUD_TOP_SIZE_PERCENT / 100.0));
       bottomHeight = int(height * (HUD_BOTTOM_SIZE_PERCENT / 100.0));
       
       topLine = topHeight;
       bottomLine = height - bottomHeight;
+      
+      //
+      // Adjust the bottom of the HUD to be bigger so that
+      // the game screen height is evenly divisible by
+      // BLOCK_WIDTH
+      //
+      float gameScreenHeight = bottomLine - topLine;
+      
+      // Round to the nearest whole number of block widths
+      int numBlockWidthsTall = int(gameScreenHeight / BLOCK_WIDTH);
+      
+      // Now change bottomHeight and bottomLine appropriately
+      // -1 from BLOCK_WIDTH so we collide with the floor when
+      // we slide blocks down for game over.
+      bottomLine = topLine + (BLOCK_WIDTH * numBlockWidthsTall) - 1;
+      bottomHeight = height - bottomLine;
     }
         
     void display() {
@@ -55,6 +71,19 @@ class Hud {
         textSize(DEFAULT_TEXT_SIZE);
         textAlign(CENTER, CENTER);
         text(str(level), width / 2, topLine / 2);
+
+        //
+        // Display coin count
+        //
+        noFill();
+        stroke(237, 165, 16);
+        strokeWeight(5);
+        ellipse((width - (BALL_RADIUS * 2)), (topLine / 2), (BALL_RADIUS * 2), (BALL_RADIUS * 2));
+
+        fill(255);
+        textSize(SMALL_TEXT_SIZE);
+        textAlign(CENTER, CENTER);
+        text(str(coins), (width - (BALL_RADIUS * 3)) - (str(coins).length() * (SMALL_TEXT_SIZE / 1.5)), (topLine / 2));
 
         popMatrix();
     }
