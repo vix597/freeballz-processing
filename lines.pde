@@ -62,6 +62,8 @@ class ShotLine {
         line = new Line(startX, startY, endX, endY);
         extendLine();  // Recalulates endPoint appropriately
         
+        distVec = PVector.sub(line.endPoint, line.startPoint);
+        
         for (Block block : ENGINE.world.blocks) {
             if (!block.isDelete) {
                 checkCollision(block);  // Recalculates endPoint appropriately
@@ -84,42 +86,109 @@ class ShotLine {
         return distVec.copy();
     }
      
+    private PVector linesIntersect(Line l1, Line l2) {
+      /*
+       * Check if line l1 intersects with line l2 and returns the first intersection PVector
+       */
+      float x1 = l1.startPoint.x;
+      float x2 = l1.endPoint.x;
+      float y1 = l1.startPoint.y;
+      float y2 = l1.endPoint.y;
+      float x3 = l2.startPoint.x;
+      float x4 = l2.endPoint.x;
+      float y3 = l2.startPoint.y;
+      float y4 = l2.endPoint.y;
+
+      // calculate the direction of the lines
+      float uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+      float uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+    
+      // if uA and uB are between 0-1, lines are colliding
+      if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
+    
+        float intersectionX = x1 + (uA * (x2-x1));
+        float intersectionY = y1 + (uA * (y2-y1));
+    
+        return new PVector(intersectionX, intersectionY);
+      }
+      
+      return null;
+    }
+     
     private void checkCollision(Block other) {
-        /*
-        Line left = new Line(other.location.x, other.location.y, other.location.x + other.bWidth, other.location.y + other.bWidth);
-        Line right = new Line();
-        Line top = new Line();
-        Line bottom = new Line();
-        float x1 = one.get_start().x;
-        float y1 = one.get_start().y;
-        float x2 = one.get_end().x;
-        float y2 = one.get_end().y;
+        //
+        // Get the lines 4 that make up the rect
+        //
+        PVector pt = null;
+        boolean left = false, right = false, up = false, down = false;
         
-        float x3 = two.get_start().x;
-        float y3 = two.get_start().y;
-        float x4 = two.get_end().x;
-        float y4 = two.get_end().y;
+        Line leftSide = new Line(
+            other.location.x,
+            other.location.y,
+            other.location.x,
+            other.location.y + other.getWidth()
+        );
+        Line rightSide = new Line(
+            other.location.x + other.getWidth(),
+            other.location.y,
+            other.location.x + other.getWidth(),
+            other.location.y + other.getWidth()
+        );
+        Line top = new Line(
+            other.location.x,
+            other.location.y,
+            other.location.x + other.getWidth(),
+            other.location.y
+        );
+        Line bottom = new Line(
+            other.location.x,
+            other.location.y + other.getWidth(),
+            other.location.x + other.getWidth(),
+            other.location.y + other.getWidth()
+        );
         
-        float bx = x2 - x1;
-        float by = y2 - y1;
-        float dx = x4 - x3;
-        float dy = y4 - y3;
-       
-        float b_dot_d_perp = bx * dy - by * dx;
-       
-        if(b_dot_d_perp == 0) return null;
-       
-        float cx = x3 - x1;
-        float cy = y3 - y1;
-       
-        float t = (cx * dy - cy * dx) / b_dot_d_perp;
-        if(t < 0 || t > 1) return null;
-       
-        float u = (cx * by - cy * bx) / b_dot_d_perp;
-        if(u < 0 || u > 1) return null;
-       
-        return new PVector(x1+t*bx, y1+t*by);
-        */
+        // Which direction is the line going
+        if (distVec.y > 0) {
+            down = true;
+        } else {
+            up = true;
+        }
+        
+        if (distVec.x > 0) {
+            right = true;
+        } else {
+            left = true;
+        }
+        
+        if (up) {
+            pt = linesIntersect(line, bottom);
+            if (pt == null) {
+                if (left) {
+                    pt = linesIntersect(line, rightSide);
+                }
+                if (right) {
+                    pt = linesIntersect(line, leftSide);
+                }
+            }
+        }
+        if (down) {
+            pt = linesIntersect(line, top);
+            
+            if (pt == null) {
+                if (left) {
+                    pt = linesIntersect(line, rightSide);
+                }
+                if (right) {
+                    pt = linesIntersect(line, leftSide);
+                }
+            }
+        }
+        
+        if (pt == null) {
+            return;
+        }
+        
+        line.endPoint = pt;
     }
 
     private void extendLine() {
