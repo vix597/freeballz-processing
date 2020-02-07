@@ -209,7 +209,7 @@ class Block extends WorldObject {
         pushMatrix();
         fill(0);
         textAlign(CENTER, CENTER);
-        textSize(BLOCK_FONT);
+        textSize(SMALL_TEXT_SIZE);
         text(str(remHitPoints), middle.x, middle.y);
         popMatrix();
     }

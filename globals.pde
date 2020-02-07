@@ -44,7 +44,6 @@ int EXPLODE_PARTICLE_COUNT;     // Number of particles a block turns into when i
 int EXPLODE_ALPHA_CHANGE;       // Rate of change for the alpha of an explostion particle (how fast do they fade out?)
 float EXPLODE_PARTICLE_BWIDTH;  // An explosion particle is also a square. What's its width and height?
 float BLOCK_XY_SPACING;         // The whitespace between the blocks
-float BLOCK_FONT;               // Size of font on a block
 float DEFAULT_TEXT_SIZE;        // Size of the rest of the text
 float SMALL_TEXT_SIZE;          // Size of small text
 int BLOCK_COLUMNS;              // Number of columns for blocks

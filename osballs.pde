@@ -27,18 +27,16 @@ void setup() {
     // Android Settings
     //
     //SHOT_SPEED = 8 * displayDensity;
-    //BLOCK_FONT = 28 * displayDensity;
     //DEFAULT_TEXT_SIZE = 42 * displayDensity;
-    //SMALL_TEXT_SIZE = 26 * displayDensity;
+    //SMALL_TEXT_SIZE = 28 * displayDensity;
     //EXPLODE_PARTICLE_BWIDTH = 12 * displayDensity;
     //SLIDE_VELOCITY = 5 * displayDensity;
     //
     // PC Settings
     //
     SHOT_SPEED = 8 * displayDensity();
-    BLOCK_FONT = 28 * displayDensity();
     DEFAULT_TEXT_SIZE = 42 * displayDensity();
-    SMALL_TEXT_SIZE = 26 * displayDensity();
+    SMALL_TEXT_SIZE = 28 * displayDensity();
     EXPLODE_PARTICLE_BWIDTH = 12 * displayDensity();
     SLIDE_VELOCITY = 5 * displayDensity();
     //
@@ -52,7 +50,7 @@ void setup() {
     BLOCK_XY_SPACING = BLOCK_WIDTH * 0.07;
     EXPLODE_PARTICLE_COUNT = 35;
     EXPLODE_ALPHA_CHANGE = 10;
-    HUD_TOP_SIZE_PERCENT = 5.0;
+    HUD_TOP_SIZE_PERCENT = 8.0;
     HUD_BOTTOM_SIZE_PERCENT = 15.0;
     
     //
@@ -75,7 +73,7 @@ void setup() {
     println("osballs!setup: Complete");
     println("\tBALL_RADIUS: ", BALL_RADIUS);
     println("\tSHOT_SPEED: ", SHOT_SPEED);
-    println("\tBLOCK_FONT: ", BLOCK_FONT);
+    println("\tSMALL_TEXT_SIZE: ", SMALL_TEXT_SIZE);
     println("\tBLOCK_COLUMNS: ", BLOCK_COLUMNS);
     println("\tBLOCK_WIDTH: ", BLOCK_WIDTH);
     println("\tBLOCK_XY_SPACING: ", BLOCK_XY_SPACING);

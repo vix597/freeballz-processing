@@ -261,7 +261,7 @@ class Ball {
     
     void checkCollision(WorldObject other) {
         /*
-         * Check for a collision with a block
+         * Check for a collision with a world object
          */
         if (!fired) {
             return;

@@ -106,7 +106,7 @@ class MainGame {
         
         pushMatrix();
         fill(255);
-        textSize(BLOCK_FONT);
+        textSize(SMALL_TEXT_SIZE);
         textAlign(CENTER);
         text(message, launchPointBall.location.x, (launchPointBall.location.y - (BALL_RADIUS * 2)));
         popMatrix();

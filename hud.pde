@@ -21,11 +21,21 @@ class Hud {
     public int numBalls;
     public int coins;
     
+    private float charWidth;
+    private float coinTxtX;
+    private float coinTxtY;
+    private float coinX;
+    private float coinY;
+    private float coinDiameter;
+    
+    private float lvlTxtX;
+    private float lvlTxtY;
+    
     Hud() {
       level = 1;
       numBalls = 1;
-      coins = 99;
-      
+      coins = 0;
+            
       topHeight = int(height * (HUD_TOP_SIZE_PERCENT / 100.0));
       bottomHeight = int(height * (HUD_BOTTOM_SIZE_PERCENT / 100.0));
       
@@ -47,6 +57,18 @@ class Hud {
       // we slide blocks down for game over.
       bottomLine = topLine + (BLOCK_WIDTH * numBlockWidthsTall) - 1;
       bottomHeight = height - bottomLine;
+      
+      //
+      // Values used to position text and things in the HUD
+      //
+      coinDiameter = COIN_RADIUS * 2;
+      charWidth = textWidth("0");  // Save off the width of a single number
+      lvlTxtX = width / 2;
+      lvlTxtY = (topLine / 2) - (DEFAULT_TEXT_SIZE / 16);  // Nudge it up a bit so it feels more 'centered'
+      coinTxtX = (width - (COIN_RADIUS * 3)) - charWidth;
+      coinTxtY = (topLine / 2) - (SMALL_TEXT_SIZE / 16);  // Nudge it up a bit so it feels more 'centered'
+      coinX = width - coinDiameter;
+      coinY = topLine / 2;
     }
         
     void display() {
@@ -70,20 +92,23 @@ class Hud {
         fill(255);
         textSize(DEFAULT_TEXT_SIZE);
         textAlign(CENTER, CENTER);
-        text(str(level), width / 2, topLine / 2);
+        text(str(level), lvlTxtX, lvlTxtY);
 
         //
-        // Display coin count
+        // Display a coin icon
         //
         noFill();
         stroke(237, 165, 16);
         strokeWeight(5);
-        ellipse((width - (BALL_RADIUS * 2)), (topLine / 2), (BALL_RADIUS * 2), (BALL_RADIUS * 2));
+        ellipse(coinX, coinY, coinDiameter, coinDiameter);
 
+        //
+        // Display the coin count next to the icon
+        //
         fill(255);
         textSize(SMALL_TEXT_SIZE);
-        textAlign(CENTER, CENTER);
-        text(str(coins), (width - (BALL_RADIUS * 3)) - (str(coins).length() * (SMALL_TEXT_SIZE / 1.5)), (topLine / 2));
+        textAlign(RIGHT, CENTER);
+        text(str(coins), coinTxtX, coinTxtY);
 
         popMatrix();
     }
