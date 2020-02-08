@@ -57,28 +57,30 @@ class ShotLine {
     
     public Line line;
     private PVector distVec;
+    public boolean isCollideBlockLeft;
+    public boolean isCollideBlockRight;
      
     ShotLine(float startX, float startY, float endX, float endY) {
+        isCollideBlockLeft = false;
+        isCollideBlockRight = false;
+      
         line = new Line(startX, startY, endX, endY);
         extendLine();  // Recalulates endPoint appropriately
         
-        distVec = PVector.sub(line.endPoint, line.startPoint);
+        distVec = PVector.sub(line.endPoint, line.startPoint);  // Get distance vector so we have direction
         
         for (Block block : ENGINE.world.blocks) {
             if (!block.isDelete) {
-                checkCollision(block);  // Recalculates endPoint appropriately
+                if (checkCollision(block)) {  // Recalculates endPoint appropriately
+                    break;
+                }
             }
         }
         
-        distVec = PVector.sub(line.endPoint, line.startPoint);  // Get the distance vector for the line
+        distVec = PVector.sub(line.endPoint, line.startPoint);  // update distance vector with new end point
     }
     
     void display() {
-        for (Block block : ENGINE.world.blocks) {
-            if (!block.isDelete) {
-                checkCollision(block);
-            }
-        }
         line.display();
     }
     
@@ -115,9 +117,10 @@ class ShotLine {
       return null;
     }
      
-    private void checkCollision(Block other) {
+    private boolean checkCollision(Block other) {
         //
-        // Get the lines 4 that make up the rect
+        // Get the lines 4 that make up the rect. Returns true on collision
+        // since a line can't collide with more than one block. So stop checking.
         //
         PVector pt = null;
         boolean left = false, right = false, up = false, down = false;
@@ -165,9 +168,15 @@ class ShotLine {
             if (pt == null) {
                 if (left) {
                     pt = linesIntersect(line, rightSide);
+                    if (pt != null) {
+                        isCollideBlockLeft = true;
+                    }
                 }
                 if (right) {
                     pt = linesIntersect(line, leftSide);
+                    if (pt != null) {
+                        isCollideBlockRight = true;
+                    }
                 }
             }
         }
@@ -177,18 +186,25 @@ class ShotLine {
             if (pt == null) {
                 if (left) {
                     pt = linesIntersect(line, rightSide);
+                    if (pt != null) {
+                        isCollideBlockLeft = true;
+                    }
                 }
                 if (right) {
                     pt = linesIntersect(line, leftSide);
+                    if (pt != null) {
+                        isCollideBlockRight = true;
+                    }
                 }
             }
         }
         
         if (pt == null) {
-            return;
+            return false;
         }
         
         line.endPoint = pt;
+        return true;
     }
 
     private void extendLine() {
@@ -286,7 +302,7 @@ class ShotLines {
             
             PVector distVec = prevLine.getDistVec();
             
-            if (prevLine.line.endPoint.x == ENGINE.screen.left || prevLine.line.endPoint.x == ENGINE.screen.right) {
+            if (prevLine.line.endPoint.x == ENGINE.screen.left || prevLine.line.endPoint.x == ENGINE.screen.right || prevLine.isCollideBlockLeft || prevLine.isCollideBlockRight) {
                 distVec.x *= -1;
             } else {
                 distVec.y *= -1;
