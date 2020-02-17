@@ -20,6 +20,7 @@ class Hud {
     public int level;
     public int numBalls;
     public int coins;
+    public int prevBest;
     
     private float charWidth;
     private float coinTxtX;
@@ -35,6 +36,7 @@ class Hud {
       level = 1;
       numBalls = 1;
       coins = 0;
+      prevBest = 1;
             
       topHeight = int(height * (HUD_TOP_SIZE_PERCENT / 100.0));
       bottomHeight = int(height * (HUD_BOTTOM_SIZE_PERCENT / 100.0));
@@ -134,6 +136,15 @@ class Hud {
          * Called to handle input on the HUD
          */
         println("hud!handleInput: You're touching the HUD!");
+    }
+    
+    void gameOver() {
+        /*
+         * Called on game over to update the "best" score
+         */
+        level = 1;
+        numBalls = 1;
+        saveGame();
     }
     
     void loadGame() {

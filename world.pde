@@ -162,6 +162,8 @@ class World {
             // Check for game over
             if (block.bottom >= ENGINE.hud.bottomLine) {
                 println("GAME OVER!!!!!");
+                gameOver();
+                return;
             }
         }
         
@@ -227,7 +229,7 @@ class World {
         
         slide = true;
     }
-    
+ 
     void deletePickupBall(PickupBall delPickupBall) {
         /*
          * Handle deleting a collectible ball

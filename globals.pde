@@ -74,3 +74,24 @@ void stopTimer(String func) {
     }
     println(func, ": ", millis() - TIME);
 }
+
+
+void startGame() {
+    /*
+     * Called in setup and game over
+     */
+    currentState = GameState.START_SCREEN;
+    startScreen = new StartScreen();
+    ENGINE = new MainGame();
+    ENGINE.hud.loadGame();
+    ENGINE.world.generateNewRow();
+}
+
+
+void gameOver() {
+    /*
+     * Called when they lose
+     */
+    ENGINE.hud.gameOver();  // This will save what is required.
+    startGame();
+}
