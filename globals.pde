@@ -8,7 +8,7 @@
  */
 
 int TIME = 0;
-boolean DEBUG = true;  // Displays cheat lines and other useful info
+boolean DEBUG = false;  // Displays cheat lines and other useful info
 
 enum GameState {
     START_SCREEN,
@@ -40,9 +40,11 @@ float PICKUP_BALL_RADIUS;       // The radius of the ring around pickup balls
 float COIN_RADIUS;              // The radius of a coin
 float SHOT_SPEED;               // The speed the ball travels for a shot
 float BLOCK_WIDTH;              // The width of a game block
-int EXPLODE_PARTICLE_COUNT;     // Number of particles a block turns into when it explodes
+int EXPLODE_PART_COUNT;         // Number of particles a block turns into when it explodes
 int EXPLODE_ALPHA_CHANGE;       // Rate of change for the alpha of an explostion particle (how fast do they fade out?)
-float EXPLODE_PARTICLE_BWIDTH;  // An explosion particle is also a square. What's its width and height?
+float EXPLODE_PART_MAX_SPEED;   // Minimum speed (used to set the velocity) - Should be negative.
+float EXPLODE_PART_MIN_SPEED;   // Max speed (used to set the velocity) - Should be positive.
+float EXPLODE_PART_BWIDTH;      // An explosion particle is also a square. What's its width and height?
 float BLOCK_XY_SPACING;         // The whitespace between the blocks
 float DEFAULT_TEXT_SIZE;        // Size of the rest of the text
 float SMALL_TEXT_SIZE;          // Size of small text

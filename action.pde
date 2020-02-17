@@ -115,17 +115,19 @@ class PrepareShot extends Action {
     /*
      * Action to prepare a shot. Draws shot lines, etc...
      */
-    
+    private boolean validAngle;
     private ShotLines shotLines;
     
     PrepareShot() {
         super(GameAction.PREPARE_SHOT);
         
+        validAngle = false;
+        
         // Initialize our handler for shot lines
         if (DEBUG) {
-            shotLines = new ShotLines(100);
+            shotLines = new ShotLines(100, true);
         } else {
-            shotLines = new ShotLines(0);
+            shotLines = new ShotLines(0, false);
         }
     }
     
@@ -135,6 +137,9 @@ class PrepareShot extends Action {
         // Handle aiming
         if (mouseY < ENGINE.screen.launchY) {              
             shotLines.display();
+            validAngle = true;
+        } else {
+            validAngle = false;
         }
     }
     
@@ -146,6 +151,11 @@ class PrepareShot extends Action {
         
         if (!isTouching && state == GameActionState.ACTION_ACTIVE) {
             // Release
+            if (!validAngle) {
+                resetAction();
+                return;
+            }
+            
             if (shotLines.lines.size() > 0) {  // A quick touch could break this.
                 ENGINE.launchLine = shotLines.lines.get(0);
                 nextState();

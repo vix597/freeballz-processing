@@ -31,14 +31,18 @@ void setup() {
     //SMALL_TEXT_SIZE = 28 * displayDensity;
     //EXPLODE_PARTICLE_BWIDTH = 12 * displayDensity;
     //SLIDE_VELOCITY = 5 * displayDensity;
+    //EXPLODE_PART_MAX_SPEED = 3 * displayDensity;
+    //EXPLODE_PART_MIN_SPEED = -3 * displayDensity;
     //
     // PC Settings
     //
     SHOT_SPEED = 8 * displayDensity();
     DEFAULT_TEXT_SIZE = 42 * displayDensity();
     SMALL_TEXT_SIZE = 28 * displayDensity();
-    EXPLODE_PARTICLE_BWIDTH = 12 * displayDensity();
+    EXPLODE_PART_BWIDTH = 12 * displayDensity();
     SLIDE_VELOCITY = 5 * displayDensity();
+    EXPLODE_PART_MAX_SPEED = 3 * displayDensity();
+    EXPLODE_PART_MIN_SPEED = -3 * displayDensity();
     //
     // Shared Settings
     //
@@ -48,7 +52,7 @@ void setup() {
     BLOCK_COLUMNS = 7;
     BLOCK_WIDTH = width / BLOCK_COLUMNS;
     BLOCK_XY_SPACING = BLOCK_WIDTH * 0.07;
-    EXPLODE_PARTICLE_COUNT = 35;
+    EXPLODE_PART_COUNT = 35;
     EXPLODE_ALPHA_CHANGE = 10;
     HUD_TOP_SIZE_PERCENT = 8.0;
     HUD_BOTTOM_SIZE_PERCENT = 15.0;
@@ -78,8 +82,10 @@ void setup() {
     println("\tBLOCK_WIDTH: ", BLOCK_WIDTH);
     println("\tBLOCK_XY_SPACING: ", BLOCK_XY_SPACING);
     println("\tDEFAULT_TEXT_SIZE: ", DEFAULT_TEXT_SIZE);
-    println("\tEXPLODE_PARTICLE_COUNT: ", EXPLODE_PARTICLE_COUNT);
-    println("\tEXPLODE_PARTICLE_BWIDTH: ", EXPLODE_PARTICLE_BWIDTH);
+    println("\tEXPLODE_PART_COUNT: ", EXPLODE_PART_COUNT);
+    println("\tEXPLODE_PART_BWIDTH: ", EXPLODE_PART_BWIDTH);
+    println("\tEXPLODE_PART_MAX_SPEED: ", EXPLODE_PART_MAX_SPEED);
+    println("\tEXPLODE_PART_MIN_SPEED: ", EXPLODE_PART_MIN_SPEED);
     println("\tEXPLODE_ALPHA_CHANGE: ", EXPLODE_ALPHA_CHANGE);
     println("\tHUD_TOP_SIZE_PERCENT: ", HUD_TOP_SIZE_PERCENT);
     println("\tHUD_BOTTOM_SIZE_PERCENT: ", HUD_BOTTOM_SIZE_PERCENT);

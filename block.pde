@@ -19,9 +19,9 @@ class Particle {
     float alpha;
 
     Particle(float x, float y, color _col) {
-        float xspeed = random(-3, 3);
-        float yspeed = random(-3, 3);
-        bWidth = EXPLODE_PARTICLE_BWIDTH;
+        float xspeed = random(EXPLODE_PART_MIN_SPEED, EXPLODE_PART_MAX_SPEED);
+        float yspeed = random(EXPLODE_PART_MIN_SPEED, EXPLODE_PART_MAX_SPEED);
+        bWidth = EXPLODE_PART_BWIDTH;
         alpha = 300;
 
         col = _col;
@@ -83,7 +83,7 @@ class Block extends WorldObject {
         isExplode = false;
         spacingX = BLOCK_XY_SPACING;
         spacingY = BLOCK_XY_SPACING;
-        maxExplodeParticles = EXPLODE_PARTICLE_COUNT;
+        maxExplodeParticles = EXPLODE_PART_COUNT;
         maxHSB = random(1, 100) + (hitPoints * random(1.0, 1.3));
 
         explodeParticles = new ArrayList<Particle>(maxExplodeParticles);

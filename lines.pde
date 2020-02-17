@@ -60,24 +60,25 @@ class ShotLine {
     public boolean isCollideBlockLeft;
     public boolean isCollideBlockRight;
      
-    ShotLine(float startX, float startY, float endX, float endY) {
+    ShotLine(float startX, float startY, float endX, float endY, boolean enableCollision) {
         isCollideBlockLeft = false;
         isCollideBlockRight = false;
       
         line = new Line(startX, startY, endX, endY);
         extendLine();  // Recalulates endPoint appropriately
-        
         distVec = PVector.sub(line.endPoint, line.startPoint);  // Get distance vector so we have direction
         
-        for (Block block : ENGINE.world.blocks) {
-            if (!block.isDelete) {
-                if (checkCollision(block)) {  // Recalculates endPoint appropriately
-                    break;
+        if (enableCollision) {            
+            for (Block block : ENGINE.world.blocks) {
+                if (!block.isDelete) {
+                    if (checkCollision(block)) {  // Recalculates endPoint appropriately
+                        break;
+                    }
                 }
             }
+     
+            distVec = PVector.sub(line.endPoint, line.startPoint);  // update distance vector with new end point
         }
-        
-        distVec = PVector.sub(line.endPoint, line.startPoint);  // update distance vector with new end point
     }
     
     void display() {
@@ -260,10 +261,12 @@ class ShotLines {
      
     public ArrayList<ShotLine> lines;
     private int numLines;
+    private boolean enableCollision;
      
-    ShotLines(int n) {
+    ShotLines(int n, boolean c) {
         lines = new ArrayList<ShotLine>();
         numLines = n;
+        enableCollision = c;
     }
     
     void display() {
@@ -286,7 +289,8 @@ class ShotLines {
             ENGINE.screen.launchPoint.x,
             ENGINE.screen.launchPoint.y,
             mouseX,
-            mouseY
+            mouseY,
+            enableCollision
         );
             
         lines.add(prevLine);  // We always get at least 1 line.
@@ -311,7 +315,7 @@ class ShotLines {
             
             PVector endPoint = PVector.add(prevLine.line.endPoint, distVec);
             
-            prevLine = new ShotLine(prevLine.line.endPoint.x, prevLine.line.endPoint.y, endPoint.x, endPoint.y);
+            prevLine = new ShotLine(prevLine.line.endPoint.x, prevLine.line.endPoint.y, endPoint.x, endPoint.y, enableCollision);
             lines.add(prevLine);
         }
     }
