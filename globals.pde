@@ -8,7 +8,7 @@
  */
 
 int TIME = 0;
-boolean DEBUG = false;  // Displays cheat lines and other useful info
+boolean DEBUG = true;  // Displays cheat lines and other useful info
 
 enum GameState {
     START_SCREEN,

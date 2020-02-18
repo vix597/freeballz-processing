@@ -66,13 +66,7 @@ void setup() {
     // Setup the rest
     //
     frameRate(FRAME_RATE); // Bump framerate to 90 FPS (default 60)
-    currentState = GameState.START_SCREEN;
-    startScreen = new StartScreen();
-    ENGINE = new MainGame();
-    
-    // TODO - Only if they are resuming
-    ENGINE.hud.loadGame();
-    ENGINE.world.generateNewRow();
+    startGame();
     
     println("osballs!setup: Complete");
     println("\tBALL_RADIUS: ", BALL_RADIUS);

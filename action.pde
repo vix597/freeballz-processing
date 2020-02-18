@@ -135,7 +135,8 @@ class PrepareShot extends Action {
     
     void actionActive() {
         // Handle aiming
-        if (mouseY < ENGINE.screen.launchY) {              
+ 
+        if (mouseY < (ENGINE.screen.launchY - BALL_RADIUS)) {              
             shotLines.display();
             validAngle = true;
         } else {
