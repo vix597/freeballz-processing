@@ -29,7 +29,7 @@ void setup() {
     //SHOT_SPEED = 8 * displayDensity;
     //DEFAULT_TEXT_SIZE = 42 * displayDensity;
     //SMALL_TEXT_SIZE = 28 * displayDensity;
-    //EXPLODE_PARTICLE_BWIDTH = 12 * displayDensity;
+    //EXPLODE_PART_BWIDTH = 12 * displayDensity;
     //SLIDE_VELOCITY = 5 * displayDensity;
     //EXPLODE_PART_MAX_SPEED = 3 * displayDensity;
     //EXPLODE_PART_MIN_SPEED = -3 * displayDensity;

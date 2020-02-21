@@ -6,7 +6,10 @@
  *  Created on: January 12, 2020
  *      Author: Sean LaPlante
  */
- 
+
+
+import java.lang.*;
+
  
 class Hud {
     /*
@@ -142,20 +145,122 @@ class Hud {
         /*
          * Called on game over to update the "best" score
          */
+        if (prevBest < level) {
+            prevBest = level;
+        }
         level = 1;
         numBalls = 1;
-        saveGame();
+        saveGame(true);
     }
     
     void loadGame() {
         /*
          * Load the latest save
          */
+        JSONObject json = null;
+        
+        // Will throw an exception if the file doesn't exist yet.
+        try {
+            json = loadJSONObject("data/save.json");
+        } catch (NullPointerException e) {
+            println("No save file yet.");
+            return;
+        }
+        
+        level = json.getInt("level");
+        numBalls = json.getInt("numBalls");
+        prevBest = json.getInt("prevBest");
+        coins = json.getInt("coins");
+        
+        JSONArray jsonBlocks = json.getJSONArray("blocks");
+        JSONArray jsonCoins = json.getJSONArray("pickupCoins");
+        JSONArray jsonPickupBalls = json.getJSONArray("pickupBalls");
+
+        if (jsonBlocks.size() > 0 || jsonCoins.size() > 0 || jsonPickupBalls.size() > 0) {
+            ENGINE.world.blocks.clear();
+            ENGINE.world.coins.clear();
+            ENGINE.world.pickupBalls.clear();
+            
+            for (int idx = 0; idx < jsonBlocks.size(); idx++) {
+                JSONObject jsonBlock = (JSONObject)jsonBlocks.get(idx);
+                float x, y;
+                x = jsonBlock.getFloat("locationX");
+                y = jsonBlock.getFloat("locationY");
+                ENGINE.world.blocks.add(new Block(new PVector(x, y), jsonBlock.getInt("points")));    
+            }
+            
+            for (int idx = 0; idx < jsonCoins.size(); idx++) {
+                JSONObject jsonCoin = (JSONObject)jsonCoins.get(idx);
+                float x, y;
+                x = jsonCoin.getFloat("locationX");
+                y = jsonCoin.getFloat("locationY");
+                ENGINE.world.coins.add(new Coin(x, y));
+            }
+            
+            for (int idx = 0; idx < jsonPickupBalls.size(); idx++) {
+                JSONObject jsonPickupBall = (JSONObject)jsonPickupBalls.get(idx);
+                float x, y;
+                x = jsonPickupBall.getFloat("locationX");
+                y = jsonPickupBall.getFloat("locationY");
+                ENGINE.world.pickupBalls.add(new PickupBall(x, y));
+            }
+        }
+        
+        println("Loaded game:");
+        println("\tLevel: ", level);
+        println("\tCoins: ", coins);
+        println("\tPrevious Best: ", prevBest);
+        println("\tNumber of balls: ", numBalls);
     }
     
-    void saveGame() {
+    void saveGame(boolean gameOver) {
         /*
          * Save the game state
+         *
+         * gameOver will be set false unless it's game over.
+         * On game over we clear the blocks.
          */
+        JSONObject json = new JSONObject();
+        json.setInt("level", level);
+        json.setInt("numBalls", numBalls);
+        json.setInt("prevBest", prevBest);
+        json.setInt("coins", coins);
+        
+        JSONArray jsonBlocks = new JSONArray();
+        JSONArray jsonCoins = new JSONArray();
+        JSONArray jsonPickupBalls = new JSONArray();
+        
+        if (!gameOver) {
+            // Save the blocks so they can resume
+            for (Block block : ENGINE.world.blocks) {
+                JSONObject jsonBlock = new JSONObject();
+                jsonBlock.setFloat("locationX", block.location.x);
+                jsonBlock.setFloat("locationY", block.location.y);
+                jsonBlock.setInt("points", block.remHitPoints);
+                jsonBlocks.append(jsonBlock);
+            }
+            
+            // Save the coins
+            for (Coin coin : ENGINE.world.coins) {
+                JSONObject jsonCoin = new JSONObject();
+                jsonCoin.setFloat("locationX", coin.location.x);
+                jsonCoin.setFloat("locationY", coin.location.y);
+                jsonCoins.append(jsonCoin);
+            }
+            
+            // Save the pickup balls
+            for (PickupBall ball : ENGINE.world.pickupBalls) {
+                JSONObject jsonPickupBall = new JSONObject();
+                jsonPickupBall.setFloat("locationX", ball.location.x);
+                jsonPickupBall.setFloat("locationY", ball.location.y);
+                jsonPickupBalls.append(jsonPickupBall);
+            }
+        }
+
+        json.setJSONArray("blocks", jsonBlocks);
+        json.setJSONArray("pickupCoins", jsonCoins);
+        json.setJSONArray("pickupBalls", jsonPickupBalls);
+        
+        saveJSONObject(json, "data/save.json");
     }
 }

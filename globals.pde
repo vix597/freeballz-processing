@@ -83,8 +83,8 @@ void startGame() {
     currentState = GameState.START_SCREEN;
     startScreen = new StartScreen();
     ENGINE = new MainGame();
-    ENGINE.hud.loadGame();
     ENGINE.world.generateNewRow();
+    ENGINE.hud.loadGame();
 }
 
 

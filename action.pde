@@ -290,6 +290,7 @@ class ChangeLevel extends Action {
         ENGINE.hud.level++;
         println("Moving to level: ", ENGINE.hud.level);
         ENGINE.world.generateNewRow();
+        ENGINE.hud.saveGame(false);
         nextState();
     }
     
