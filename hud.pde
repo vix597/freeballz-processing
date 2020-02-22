@@ -161,8 +161,8 @@ class Hud {
         
         // Will throw an exception if the file doesn't exist yet.
         try {
-            json = loadJSONObject("data/save.json");
-        } catch (NullPointerException e) {
+            json = loadJSONObject(SAVE_LOCATION);
+        } catch (Exception e) {
             println("No save file yet.");
             return;
         }
@@ -261,6 +261,6 @@ class Hud {
         json.setJSONArray("pickupCoins", jsonCoins);
         json.setJSONArray("pickupBalls", jsonPickupBalls);
         
-        saveJSONObject(json, "data/save.json");
+        saveJSONObject(json, SAVE_LOCATION);
     }
 }

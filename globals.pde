@@ -31,7 +31,7 @@ MainGame ENGINE;
 int FRAME_RATE = 90;
 
 //
-// Globally set these based on DPI
+// Globals used throughout the game
 //
 // These are set in setup()
 //
@@ -52,6 +52,7 @@ int BLOCK_COLUMNS;              // Number of columns for blocks
 float HUD_TOP_SIZE_PERCENT;     // Percentage of the screen height that should be taken for the top of the HUD
 float HUD_BOTTOM_SIZE_PERCENT;  // Percentage of the screen height that should be taken for the bottom of the HUD
 float SLIDE_VELOCITY;           // y direction velocity for sliding blocks down when the level changes
+String SAVE_LOCATION;           // The save location. On android just "osballs.json". On PC "data/osballs.json"
 
 
 void startTimer() {
