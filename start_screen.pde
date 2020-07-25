@@ -13,7 +13,18 @@ class StartScreen {
      * Contains buttons for play, settings, etc.
      */
     
-    StartScreen() {}
+    Button playButton;
+    
+    StartScreen() {
+      float buttonHeight = width * 0.1;
+      float buttonWidth = width / 2;
+      float halfWidth = buttonWidth / 2;
+      float halfHeight = buttonHeight / 2;
+      float xPos = (width / 2) - halfWidth;
+      float yPos = (height / 2) - halfHeight;
+      
+      playButton = new Button("PLAY", xPos, yPos, buttonWidth, buttonHeight, 10);
+    }
     
     void display() {
         /*
@@ -22,10 +33,7 @@ class StartScreen {
          */
         
         pushMatrix();
-        textAlign(CENTER, CENTER);
-        textSize(DEFAULT_TEXT_SIZE);
-        fill(255);
-        text("Touch to start", width/2, height/2);
+        playButton.display();
         popMatrix();
     }
     
@@ -35,7 +43,7 @@ class StartScreen {
          * happened while on this screen
          */
         
-        if (input == InputType.TOUCH_END) {
+        if (input == InputType.TOUCH_END && playButton.onButton(mouseX, mouseY)) {
             currentState = GameState.PLAYING;  // Set the game state to playing
         }  
     }
