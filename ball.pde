@@ -276,28 +276,30 @@ class Ball {
     
         if (dist < minDistance) {
             // Collision is impossible until this is true.
-            boolean above = false, below = false, left = false, right = false;
+            boolean above = false, below = false, left = false, right = false, inside = false;
             
             // Get the leading point on the circle
             PVector radiusVec = velocity.setMag(null, BALL_RADIUS);
             PVector edgePoint = PVector.add(location, radiusVec);
             
-            if (location.x > other.getRight()) {
+            if (location.x >= other.getRight()) {
                 // ball is on the right of the block
                 edgePoint = new PVector(location.x - BALL_RADIUS, location.y);
                 right = true;
-            } else if (location.x < other.getLeft()) {
+            } else if (location.x <= other.getLeft()) {
                 // ball is on the left of the block
                 edgePoint = new PVector(location.x + BALL_RADIUS, location.y);
                 left = true;
-            } else if (location.y > other.getBottom()) {
+            } else if (location.y >= other.getBottom()) {
                 // ball is underneith
                 edgePoint = new PVector(location.x, location.y - BALL_RADIUS);
                 below = true;
-            } else if (location.y < other.getTop()) {
+            } else if (location.y <= other.getTop()) {
                 // ball is above
                 edgePoint = new PVector(location.x, location.y + BALL_RADIUS);
                 above = true;
+            } else {
+                inside = true;
             }
             
             if (edgePoint.x > other.getLeft() && edgePoint.x < other.getRight() && edgePoint.y > other.getTop() && edgePoint.y < other.getBottom()) {
@@ -312,6 +314,9 @@ class Ball {
                         velocity.x *= -1;
                     } else if (above || below) {
                         velocity.y *= -1;
+                    } else if (inside) {
+                      velocity.x *= -1;
+                      velocity.y *= -1;
                     }
                     
                     if (left) {
