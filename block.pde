@@ -158,6 +158,15 @@ class Block extends WorldObject {
         }
     }
     
+    boolean isPointInObject(PVector point) {
+        /*
+         * Called to determine if the x,y of the provided 'point'
+         * is inside the bounds of this object. Used for collision
+         * detection.
+         */
+        return false;
+    }
+    
     private void explode() {
         /*
          * Internal method called when the hit-points reach 0

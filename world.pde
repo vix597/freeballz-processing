@@ -61,6 +61,7 @@ abstract class WorldObject {
     public abstract PVector getMiddle();// Get the middle (x, y) coords of the object.
     public abstract void collide();  // called when a ball collides with the object.
     public abstract void display();  // called on each frame to display the object.
+    public abstract boolean isPointInObject(PVector point);  // called to check if a point is inside the bounds of this object (used for collision).
 }
 
 

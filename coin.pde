@@ -75,6 +75,15 @@ class Coin extends WorldObject {
         return middle;
     }
     
+    boolean isPointInObject(PVector point) {
+        /*
+         * Called to determine if the x,y of the provided 'point'
+         * is inside the bounds of this object. Used for collision
+         * detection.
+         */
+        return false;
+    }
+    
     void collide() {
         /*
          * Called when a ball collides with this object
