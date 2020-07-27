@@ -23,19 +23,19 @@ abstract class WorldObject {
      */
 
     public final ObjectType type;
-    public boolean isCollectible;
+    public boolean collectible;
     protected PVector location;
         
     WorldObject(float x, float y, boolean collect, ObjectType _type) {
-        location = new PVector(x, y);
-        isCollectible = collect;
-        type = _type;
+        this.location = new PVector(x, y);
+        this.collectible = collect;
+        this.type = _type;
     }
     
     WorldObject(PVector loc, boolean collect, ObjectType _type) {
-        location = loc;
-        isCollectible = collect;
-        type = _type;
+        this.location = loc;
+        this.collectible = collect;
+        this.type = _type;
     }
     
     void slide(float amount) {
@@ -43,7 +43,14 @@ abstract class WorldObject {
          * Called to slide the object down on
          * level change
          */
-        location.y += amount;
+        this.location.y += amount;
+    }
+    
+    boolean isCollectible() {
+        /*
+         * Is the object a collectible object
+         */
+        return this.collectible;
     }
     
     /*
@@ -61,7 +68,7 @@ abstract class WorldObject {
     public abstract PVector getMiddle();// Get the middle (x, y) coords of the object.
     public abstract void collide();  // called when a ball collides with the object.
     public abstract void display();  // called on each frame to display the object.
-    public abstract boolean isPointInObject(PVector point);  // called to check if a point is inside the bounds of this object (used for collision).
+    public abstract boolean isBallInObject(Ball ball);  // called to check if the ball is colliding with the object
 }
 
 

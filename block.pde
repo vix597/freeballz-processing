@@ -158,13 +158,13 @@ class Block extends WorldObject {
         }
     }
     
-    boolean isPointInObject(PVector point) {
+    boolean isBallInObject(Ball ball) {
         /*
          * Called to determine if the x,y of the provided 'point'
          * is inside the bounds of this object. Used for collision
          * detection.
          */
-        return false;
+        return isCircleInRect(ball.location, BALL_RADIUS, this.location, this.bWidth, this.bWidth);
     }
     
     private void explode() {
