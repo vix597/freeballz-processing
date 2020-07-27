@@ -33,7 +33,7 @@ void setup() {
     //SLIDE_VELOCITY = 5 * displayDensity;
     //EXPLODE_PART_MAX_SPEED = 3 * displayDensity;
     //EXPLODE_PART_MIN_SPEED = -3 * displayDensity;
-    //SAVE_LOCATION = "osballs.json";
+    //SAVE_LOCATION = "freeballz.json";
     //
     // PC Settings
     //
@@ -44,7 +44,7 @@ void setup() {
     SLIDE_VELOCITY = 5 * displayDensity();
     EXPLODE_PART_MAX_SPEED = 3 * displayDensity();
     EXPLODE_PART_MIN_SPEED = -3 * displayDensity();
-    SAVE_LOCATION = "data/osballs.json";
+    SAVE_LOCATION = "data/freeballz.json";
     //
     // Shared Settings
     //
