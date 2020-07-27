@@ -215,10 +215,24 @@ class Block extends WorldObject {
         /*
          * Write the remaining hit points on the block
          */
+        String remHitPointsStr = str(remHitPoints);
+        float textSize = SMALL_TEXT_SIZE;
+         
         pushMatrix();
         fill(0);
         textAlign(CENTER, CENTER);
-        textSize(SMALL_TEXT_SIZE);
+        
+        if (remHitPointsStr.length() > 3) {
+            int multiplier = remHitPointsStr.length() - 3;
+            textSize -= (4 * multiplier);
+        }
+        
+        if (textSize < 6) {
+            // Limit how small the text could get
+            textSize = 6;
+        }
+        
+        textSize(textSize);
         text(str(remHitPoints), middle.x, middle.y);
         popMatrix();
     }
