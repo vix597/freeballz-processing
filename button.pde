@@ -20,7 +20,7 @@ class Button {
   color buttonHoverColor;
   color textColor;
   String text;
-  int textSize;
+  float textSize;
   
   color DEFAULT_TEXT_COLOR = color(255);  // white
   color DEFAULT_BUTTON_COLOR = color(255, 53, 73);  // red/pink
@@ -31,7 +31,7 @@ class Button {
     this.buttonColor = DEFAULT_BUTTON_COLOR;
     this.buttonHoverColor = DEFAULT_BUTTON_HOVER_COLOR;
     this.textColor = DEFAULT_TEXT_COLOR;
-    this.textSize = 14;
+    this.textSize = DEFAULT_TEXT_SIZE;
   }
   
   void create(String text, PVector location, float buttonWidth, float buttonHeight, float cornerRadius) {
@@ -54,7 +54,7 @@ class Button {
     this.textColor = c;
   }
   
-  void setTextSize(int size) {
+  void setTextSize(float size) {
     this.textSize = size;
   }
   
