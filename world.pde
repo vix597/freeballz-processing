@@ -242,7 +242,7 @@ class World {
         /*
          * Handle deleting a collectible ball
          */
-         ENGINE.hud.numBalls++;
+         ENGINE.hud.ballsCollectedThisTurn++;
          deletePickupBalls.add(delPickupBall);
     }
     

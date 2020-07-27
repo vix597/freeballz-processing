@@ -25,6 +25,7 @@ class Hud {
     public int coins;
     public int prevBest;
     
+    private int ballsCollectedThisTurn;
     private float charWidth;
     private float coinTxtX;
     private float coinTxtY;
@@ -38,6 +39,7 @@ class Hud {
     Hud() {
       level = 1;
       numBalls = 1;
+      ballsCollectedThisTurn = 0;
       coins = 0;
       prevBest = 1;
             
