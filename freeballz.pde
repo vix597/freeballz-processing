@@ -17,20 +17,20 @@ void setup() {
     //
     // Android
     //
-    //fullScreen();  // Runs the sketch fullscreen. Must be first line in setup()
+    fullScreen();  // Runs the sketch fullscreen. Must be first line in setup()
     //
     // PC
     //
-    size(600, 1233);  // For testing in Java mode
+    //size(600, 1233);  // For testing in Java mode
 
     //
     // Android Settings
     //
-    //SAVE_LOCATION = "freeballz.json";
+    SAVE_LOCATION = "freeballz.json";
     //
     // PC Settings
     //
-    SAVE_LOCATION = "data/freeballz.json";
+    //SAVE_LOCATION = "data/freeballz.json";
     //
     // Shared Settings
     //
@@ -55,7 +55,7 @@ void setup() {
     //
     // Android
     //
-    //androidSetup();  // Do the android specific bits
+    androidSetup();  // Do the android specific bits
     
     //
     // Setup the rest
