@@ -23,9 +23,10 @@ class StartScreen {
       float halfHeight = buttonHeight / 2;
       float xPos = (width / 2) - halfWidth;
       float yPos = (height / 2) - halfHeight;
+      float buttonPadding = buttonHeight / 3;
       
-      playButton = new Button("PLAY", xPos, yPos, buttonWidth, buttonHeight, 10);
-      newGameButton = new Button("NEW GAME", xPos, yPos + buttonHeight + 10, buttonWidth, buttonHeight, 10);
+      playButton = new Button("CONTINUE", xPos, yPos, buttonWidth, buttonHeight, 10);
+      newGameButton = new Button("NEW GAME", xPos, yPos + buttonHeight + buttonPadding, buttonWidth, buttonHeight, 10);
     }
     
     void display() {
@@ -47,9 +48,12 @@ class StartScreen {
          */
         
         if (input == InputType.TOUCH_END && playButton.onButton(mouseX, mouseY)) {
+            println("Continue game");
             currentState = GameState.PLAYING;  // Set the game state to playing
         }  else if (input == InputType.TOUCH_END && newGameButton.onButton(mouseX, mouseY)) {
+            println("New game");
             ENGINE.hud.gameOver();
+            ENGINE.hud.loadGame();
             currentState = GameState.PLAYING;  // Set the game state to playing
         }
     }

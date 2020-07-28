@@ -161,6 +161,7 @@ class Hud {
          */
         JSONObject json = null, version = null;
         int ver_major = 0, ver_minor = 0, ver_build = 0;
+        String currentVersion;
         
         // Will throw an exception if the file doesn't exist yet.
         try {
@@ -169,22 +170,15 @@ class Hud {
             println("No save file yet.");
             return;
         }
-        
-        if (!json.hasKey("version")) {
-            println("Pre-release version detected. re-making save data");
-            return;
-        }
-        
+                
         // Parse out the version info
         version = json.getJSONObject("version");
         ver_major = version.getInt("major");
         ver_minor = version.getInt("minor");
         ver_build = version.getInt("build");
         
-        String saveVersion = str(ver_major) + "." + str(ver_minor) + "." + str(ver_build);
-        String currentVersion = str(VERSION_MAJOR) + "." + str(VERSION_MINOR) + "." + str(VERSION_BUILD);
-        println("Free Ballz version: ", currentVersion);
-        println("Save file version: ", saveVersion);        
+        currentVersion = str(VERSION_MAJOR) + "." + str(VERSION_MINOR) + "." + str(VERSION_BUILD);
+        println("Free Ballz version: ", currentVersion);        
 
         if (ver_major > VERSION_MAJOR || ver_minor > VERSION_MINOR || ver_build > VERSION_BUILD) {
             println("Downgrading is not supported. Clearing save data.");
