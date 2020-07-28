@@ -53,6 +53,9 @@ float HUD_TOP_SIZE_PERCENT;     // Percentage of the screen height that should b
 float HUD_BOTTOM_SIZE_PERCENT;  // Percentage of the screen height that should be taken for the bottom of the HUD
 float SLIDE_VELOCITY;           // y direction velocity for sliding blocks down when the level changes
 String SAVE_LOCATION;           // The save location. On android just "osballs.json". On PC "data/osballs.json"
+int VERSION_MAJOR = 1;          // Major version number (e.g. the 1 in 1.2.3)
+int VERSION_MINOR = 0;          // Minor version number (e.g. the 2 in 1.2.3)
+int VERSION_BUILD = 0;          // The build/patch version number (e.g. the 3 in 1.2.3)
 
 
 void startTimer() {

@@ -35,7 +35,7 @@ class Particle {
         pushMatrix();
         noStroke();
         fill(col, alpha);
-        rect(location.x, location.y, bWidth, bWidth);
+        rect(location.x, location.y, bWidth, bWidth, 10);
         popMatrix();
         
         alpha -= EXPLODE_ALPHA_CHANGE;
@@ -206,7 +206,7 @@ class Block extends WorldObject {
         // We want to display the block in the middle of the hit box
         // and a little smaller so that it looks like there are gaps
         // between blocks.
-        rect(location.x + spacingX, location.y + spacingY, bWidth - spacingX, bWidth - spacingY);
+        rect(location.x + spacingX, location.y + spacingY, bWidth - spacingX, bWidth - spacingY, 2);
 
         popMatrix();
     }
@@ -215,10 +215,24 @@ class Block extends WorldObject {
         /*
          * Write the remaining hit points on the block
          */
+        String remHitPointsStr = str(remHitPoints);
+        float textSize = SMALL_TEXT_SIZE;
+         
         pushMatrix();
         fill(0);
         textAlign(CENTER, CENTER);
-        textSize(SMALL_TEXT_SIZE);
+        
+        if (remHitPointsStr.length() > 3) {
+            int multiplier = remHitPointsStr.length() - 3;
+            textSize -= (4 * multiplier);
+        }
+        
+        if (textSize < 6) {
+            // Limit how small the text could get
+            textSize = 6;
+        }
+        
+        textSize(textSize);
         text(str(remHitPoints), middle.x, middle.y);
         popMatrix();
     }

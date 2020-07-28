@@ -210,6 +210,9 @@ class ExecuteShot extends Action {
       
         if (ENGINE.balls.size() == 0) {
             println("shot complete");
+            // Commit all the collected balls
+            ENGINE.hud.numBalls += ENGINE.hud.ballsCollectedThisTurn;
+            ENGINE.hud.ballsCollectedThisTurn = 0;
             nextState();
             return;
         }

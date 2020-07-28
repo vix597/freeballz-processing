@@ -25,6 +25,7 @@ class Hud {
     public int coins;
     public int prevBest;
     
+    private int ballsCollectedThisTurn;
     private float charWidth;
     private float coinTxtX;
     private float coinTxtY;
@@ -38,6 +39,7 @@ class Hud {
     Hud() {
       level = 1;
       numBalls = 1;
+      ballsCollectedThisTurn = 0;
       coins = 0;
       prevBest = 1;
             
@@ -157,7 +159,8 @@ class Hud {
         /*
          * Load the latest save
          */
-        JSONObject json = null;
+        JSONObject json = null, version = null;
+        int ver_major = 0, ver_minor = 0, ver_build = 0;
         
         // Will throw an exception if the file doesn't exist yet.
         try {
@@ -165,6 +168,21 @@ class Hud {
         } catch (Exception e) {
             println("No save file yet.");
             return;
+        }
+        
+        // Parse out the version info
+        version = json.getJSONObject("version");
+        ver_major = version.getInt("major");
+        ver_minor = version.getInt("minor");
+        ver_build = version.getInt("build");
+        
+        if (ver_major > VERSION_MAJOR || ver_minor > VERSION_MINOR || ver_build > VERSION_BUILD) {
+            println("Downgrading is not supported. Clearing save data.");
+            return;  // Just return. The save data will be overwritten on save.
+        }
+        
+        if (ver_major < VERSION_MAJOR || ver_minor < VERSION_MINOR || ver_build < VERSION_BUILD) {
+            migrateVersion(ver_major, ver_minor, ver_build);
         }
         
         level = json.getInt("level");
@@ -226,6 +244,12 @@ class Hud {
         json.setInt("prevBest", prevBest);
         json.setInt("coins", coins);
         
+        JSONObject version = new JSONObject();
+        version.setInt("major", VERSION_MAJOR);
+        version.setInt("minor", VERSION_MINOR);
+        version.setInt("build", VERSION_BUILD);
+        json.setJSONObject("version", version);
+        
         JSONArray jsonBlocks = new JSONArray();
         JSONArray jsonCoins = new JSONArray();
         JSONArray jsonPickupBalls = new JSONArray();
@@ -262,5 +286,19 @@ class Hud {
         json.setJSONArray("pickupBalls", jsonPickupBalls);
         
         saveJSONObject(json, SAVE_LOCATION);
+    }
+    
+    void migrateVersion(int from_major, int from_minor, int from_build) {
+        /*
+         * Called automatically in loadGame() if the version in the config
+         * doesn't match the current game version.
+         */
+        String from = str(from_major) + "." + str(from_minor) + "." + str(from_build);
+        String to = str(VERSION_MAJOR) + "." + str(VERSION_MINOR) + "." + str(VERSION_BUILD);
+        println("New version detected. Migrating save file from ", from, " to ", to);
+        
+        //
+        // TODO: Write migrations here when we need them
+        //
     }
 }

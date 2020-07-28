@@ -16,8 +16,8 @@ class StartScreen {
     Button playButton;
     
     StartScreen() {
-      float buttonHeight = width * 0.1;
-      float buttonWidth = width / 2;
+      float buttonHeight = width * 0.15;
+      float buttonWidth = width / 1.5;
       float halfWidth = buttonWidth / 2;
       float halfHeight = buttonHeight / 2;
       float xPos = (width / 2) - halfWidth;
