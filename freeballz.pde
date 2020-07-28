@@ -13,27 +13,18 @@ void setup() {
      * Builtin method provided by Processing. This is
      * always called first.
      */
-    
+     
     //
-    // Android
+    // PC Setting (comment out in Android mode)
     //
-    fullScreen();  // Runs the sketch fullscreen. Must be first line in setup()
-    //
-    // PC
-    //
-    //size(600, 1233);  // For testing in Java mode
-
-    //
-    // Android Settings
-    //
-    SAVE_LOCATION = "freeballz.json";
-    //
-    // PC Settings
-    //
-    //SAVE_LOCATION = "data/freeballz.json";
-    //
-    // Shared Settings
-    //
+    size(600, 1233);
+     
+    if (isAndroidMode()) {
+        SAVE_LOCATION = "freeballz-d.json";
+    } else {
+        SAVE_LOCATION = "data/freeballz-m.json";
+    }
+ 
     SHOT_SPEED = 8 * getDisplayDensity();
     DEFAULT_TEXT_SIZE = 42 * getDisplayDensity();
     SMALL_TEXT_SIZE = 28 * getDisplayDensity();
