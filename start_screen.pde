@@ -52,8 +52,7 @@ class StartScreen {
             currentState = GameState.PLAYING;  // Set the game state to playing
         }  else if (input == InputType.TOUCH_END && newGameButton.onButton(mouseX, mouseY)) {
             println("New game");
-            ENGINE.hud.gameOver();
-            ENGINE.hud.loadGame();
+            gameOver();
             currentState = GameState.PLAYING;  // Set the game state to playing
         }
     }
