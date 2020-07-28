@@ -142,7 +142,7 @@ class Hud {
          */
         println("hud!handleInput: You're touching the HUD!");
     }
-    
+
     void gameOver() {
         /*
          * Called on game over to update the "best" score
@@ -170,12 +170,22 @@ class Hud {
             return;
         }
         
+        if (!json.hasKey("version")) {
+            println("Pre-release version detected. re-making save data");
+            return;
+        }
+        
         // Parse out the version info
         version = json.getJSONObject("version");
         ver_major = version.getInt("major");
         ver_minor = version.getInt("minor");
         ver_build = version.getInt("build");
         
+        String saveVersion = str(ver_major) + "." + str(ver_minor) + "." + str(ver_build);
+        String currentVersion = str(VERSION_MAJOR) + "." + str(VERSION_MINOR) + "." + str(VERSION_BUILD);
+        println("Free Ballz version: ", currentVersion);
+        println("Save file version: ", saveVersion);        
+
         if (ver_major > VERSION_MAJOR || ver_minor > VERSION_MINOR || ver_build > VERSION_BUILD) {
             println("Downgrading is not supported. Clearing save data.");
             return;  // Just return. The save data will be overwritten on save.
