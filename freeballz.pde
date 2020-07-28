@@ -6,7 +6,7 @@
  *  Created on: December 23, 2019
  *      Author: Sean LaPlante
  */
- 
+
 
 void setup() {
     /*
@@ -17,37 +17,30 @@ void setup() {
     //
     // Android
     //
-    fullScreen();  // Runs the sketch fullscreen. Must be first line in setup()
+    //fullScreen();  // Runs the sketch fullscreen. Must be first line in setup()
     //
     // PC
     //
-    //size(600, 1233);  // For testing in Java mode
+    size(600, 1233);  // For testing in Java mode
 
     //
     // Android Settings
     //
-    SHOT_SPEED = 8 * displayDensity;
-    DEFAULT_TEXT_SIZE = 42 * displayDensity;
-    SMALL_TEXT_SIZE = 28 * displayDensity;
-    EXPLODE_PART_BWIDTH = 12 * displayDensity;
-    SLIDE_VELOCITY = 5 * displayDensity;
-    EXPLODE_PART_MAX_SPEED = 3 * displayDensity;
-    EXPLODE_PART_MIN_SPEED = -3 * displayDensity;
-    SAVE_LOCATION = "freeballz.json";
+    //SAVE_LOCATION = "freeballz.json";
     //
     // PC Settings
     //
-    //SHOT_SPEED = 8 * displayDensity();
-    //DEFAULT_TEXT_SIZE = 42 * displayDensity();
-    //SMALL_TEXT_SIZE = 28 * displayDensity();
-    //EXPLODE_PART_BWIDTH = 12 * displayDensity();
-    //SLIDE_VELOCITY = 5 * displayDensity();
-    //EXPLODE_PART_MAX_SPEED = 3 * displayDensity();
-    //EXPLODE_PART_MIN_SPEED = -3 * displayDensity();
-    //SAVE_LOCATION = "data/freeballz.json";
+    SAVE_LOCATION = "data/freeballz.json";
     //
     // Shared Settings
     //
+    SHOT_SPEED = 8 * getDisplayDensity();
+    DEFAULT_TEXT_SIZE = 42 * getDisplayDensity();
+    SMALL_TEXT_SIZE = 28 * getDisplayDensity();
+    EXPLODE_PART_BWIDTH = 12 * getDisplayDensity();
+    SLIDE_VELOCITY = 5 * getDisplayDensity();
+    EXPLODE_PART_MAX_SPEED = 3 * getDisplayDensity();
+    EXPLODE_PART_MIN_SPEED = -3 * getDisplayDensity();
     BALL_RADIUS = width * 0.02;
     PICKUP_BALL_RADIUS = BALL_RADIUS * 1.75;
     COIN_RADIUS = BALL_RADIUS * 1.5;
@@ -62,7 +55,7 @@ void setup() {
     //
     // Android
     //
-    androidSetup();  // Do the android specific bits
+    //androidSetup();  // Do the android specific bits
     
     //
     // Setup the rest
