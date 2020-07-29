@@ -48,7 +48,7 @@ class Hud {
       
       topLine = topHeight;
       bottomLine = height - bottomHeight;
-      
+            
       //
       // Adjust the bottom of the HUD to be bigger so that
       // the game screen height is evenly divisible by

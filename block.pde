@@ -35,7 +35,7 @@ class Particle {
         pushMatrix();
         noStroke();
         fill(col, alpha);
-        rect(location.x, location.y, bWidth, bWidth, 10);
+        rect(location.x, location.y, bWidth, bWidth, EXPLODE_PART_RADIUS);
         popMatrix();
         
         alpha -= EXPLODE_ALPHA_CHANGE;
@@ -206,7 +206,7 @@ class Block extends WorldObject {
         // We want to display the block in the middle of the hit box
         // and a little smaller so that it looks like there are gaps
         // between blocks.
-        rect(location.x + spacingX, location.y + spacingY, bWidth - spacingX, bWidth - spacingY, 2);
+        rect(location.x + spacingX, location.y + spacingY, bWidth - spacingX, bWidth - spacingY, BLOCK_RADIUS);
 
         popMatrix();
     }

@@ -21,11 +21,9 @@ enum InputType {
     TOUCH_MOVE
 }
 
-GameState currentState;
-
-StartScreen startScreen;
-
-MainGame ENGINE;
+GameState currentState = GameState.START_SCREEN;
+StartScreen startScreen = null;
+MainGame ENGINE = null;
 
 
 int FRAME_RATE = 90;
@@ -40,11 +38,13 @@ float PICKUP_BALL_RADIUS;       // The radius of the ring around pickup balls
 float COIN_RADIUS;              // The radius of a coin
 float SHOT_SPEED;               // The speed the ball travels for a shot
 float BLOCK_WIDTH;              // The width of a game block
+float BLOCK_RADIUS;             // A block's corner radius to make the corners kind-of rounded
 int EXPLODE_PART_COUNT;         // Number of particles a block turns into when it explodes
 int EXPLODE_ALPHA_CHANGE;       // Rate of change for the alpha of an explostion particle (how fast do they fade out?)
 float EXPLODE_PART_MAX_SPEED;   // Minimum speed (used to set the velocity) - Should be negative.
 float EXPLODE_PART_MIN_SPEED;   // Max speed (used to set the velocity) - Should be positive.
 float EXPLODE_PART_BWIDTH;      // An explosion particle is also a square. What's its width and height?
+float EXPLODE_PART_RADIUS;      // An explosion particle's corner radius to make the rects rounded.
 float BLOCK_XY_SPACING;         // The whitespace between the blocks
 float DEFAULT_TEXT_SIZE;        // Size of the rest of the text
 float SMALL_TEXT_SIZE;          // Size of small text
@@ -56,6 +56,8 @@ String SAVE_LOCATION;           // The save location. On android just "osballs.j
 int VERSION_MAJOR = 1;          // Major version number (e.g. the 1 in 1.2.3)
 int VERSION_MINOR = 0;          // Minor version number (e.g. the 2 in 1.2.3)
 int VERSION_BUILD = 0;          // The build/patch version number (e.g. the 3 in 1.2.3)
+boolean IS_ANDROID_MODE;        // Set in settings(). True if running in Android mode, False otherwise.
+float BUTTON_RADIUS;            // A button's corner radius.
 
 
 void startTimer() {

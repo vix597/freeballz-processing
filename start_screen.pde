@@ -25,8 +25,8 @@ class StartScreen {
       float yPos = (height / 2) - halfHeight;
       float buttonPadding = buttonHeight / 3;
       
-      playButton = new Button("CONTINUE", xPos, yPos, buttonWidth, buttonHeight, 10);
-      newGameButton = new Button("NEW GAME", xPos, yPos + buttonHeight + buttonPadding, buttonWidth, buttonHeight, 10);
+      playButton = new Button("CONTINUE", xPos, yPos, buttonWidth, buttonHeight, BUTTON_RADIUS);
+      newGameButton = new Button("NEW GAME", xPos, yPos + buttonHeight + buttonPadding, buttonWidth, buttonHeight, BUTTON_RADIUS);
     }
     
     void display() {
