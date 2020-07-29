@@ -19,12 +19,26 @@ Method getInternalProcessingMethod(String methodName) {
     try {
         return cls.getMethod(methodName);
     } catch (Exception e) {
+        println("Cannot find", methodName, ":", e);
         return null;
     }
 }
 
 
-Field getInternalProcessingField(String fieldName) {
+Object invokeInternalProcessingMethod(String methodName, Object ... args) {
+    Method meth = getInternalProcessingMethod(methodName);
+    if (meth != null) {
+        try {
+            return meth.invoke(this, args);
+        } catch (Exception e) {
+            println("Unable to invoke", methodName, ":", e);
+        }
+    }
+    return null;
+}
+
+
+Object getInternalProcessingField(String fieldName) {
     /*
      * Helper method that can be used to return
      * an internal processing field by name
@@ -32,8 +46,9 @@ Field getInternalProcessingField(String fieldName) {
     Class cls = this.getClass();
     
     try {
-        return cls.getField(fieldName);
+        return cls.getField(fieldName).get(this);
     } catch (Exception e) {
+        println("Unable to get field", fieldName, ": ", e);
         return null;
     }
 }
@@ -61,12 +76,9 @@ float getDisplayDensity() {
      * we're running on Android (where display density is not
      * a method) or if we're running on a PC where it is a method.
      */
-    Method displayDensityMethod = getInternalProcessingMethod("displayDensity");
-    
-    if (displayDensityMethod == null) {
-        Field displayDensityField = getInternalProcessingField("displayDensity");
+    if (IS_ANDROID_MODE) {
         try {
-            return (float)displayDensityField.get(this);
+            return (float)getInternalProcessingField("displayDensity");
         } catch (Exception e) {
             println("Android mode: Unable to get display density: ", e);
             return 1.0;
@@ -76,7 +88,7 @@ float getDisplayDensity() {
             // In java mode the displayDensity method returns an int, but
             // in Android mode it returns a float. This whole thing is
             // stupid.
-            return ((Integer)displayDensityMethod.invoke(this)).floatValue();
+            return ((Integer)invokeInternalProcessingMethod("displayDensity")).floatValue();
         } catch (Exception e) {
             println("Java mode: Unable to get display density: ", e);
             return 1.0;

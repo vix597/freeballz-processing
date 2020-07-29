@@ -11,6 +11,7 @@
  */
  
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.view.WindowManager;  // To access LayoutParams and FLAG_KEEP_SCREEN_ON
 
 
@@ -18,8 +19,6 @@ void androidSetup() {
     /*
      * Called from setup() - Does the android specific bits
      */
-    orientation(PORTRAIT);
-
     // Set window flags to keep the screen on
     keepScreenOn();
 }
@@ -32,6 +31,7 @@ void keepScreenOn() {
      * since this flag must be added in the UI thread.
      */
     Activity activity = getActivity();
+    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     
     activity.runOnUiThread(new Runnable() {
         @Override
