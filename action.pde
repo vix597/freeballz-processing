@@ -193,7 +193,7 @@ class ExecuteShot extends Action {
     }
     
     void actionStart() {
-        velocity = ENGINE.launchLine.getDistVec();
+        velocity = ENGINE.launchLine.getHeading();
         velocity.setMag(SHOT_SPEED);
         
         for (int i = 0; i < ENGINE.hud.numBalls; i++) {

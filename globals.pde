@@ -21,6 +21,13 @@ enum InputType {
     TOUCH_MOVE
 }
 
+enum BlockSide {
+    BLOCK_LEFT,
+    BLOCK_RIGHT,
+    BLOCK_TOP,
+    BLOCK_BOTTOM
+}
+
 GameState currentState = GameState.START_SCREEN;
 StartScreen startScreen = null;
 MainGame ENGINE = null;
