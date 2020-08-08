@@ -12,11 +12,8 @@ class Line {
     /*
      * Handles holding information needed for a line
      */
-    
     public PVector startPoint;
     public PVector endPoint;
-    public PVector heading;
-    public float len;
     
     Line(float startX, float startY, float endX, float endY) {
         /*
@@ -25,7 +22,6 @@ class Line {
          */
         startPoint = new PVector(startX, startY);
         endPoint = new PVector(endX, endY);
-        recalculate();
     }
     
     Line(PVector start, PVector end) {
@@ -38,40 +34,18 @@ class Line {
         endPoint = end;
     }
     
-    private void recalculate() {
+    float getLength() {
         /*
-         * Redo length/heading math
+         * Get the length of the line
          */
-        println(endPoint, ",", startPoint);
-        heading = PVector.sub(endPoint, startPoint);
-        len = heading.mag();
-        heading = heading.normalize();  // We pull the length of the line from heading, now normalize it to 1
-    }
-    
-    void extend(float amount) {
-        /*
-         * Extend the line by amount
-         */
-        PVector moveEndPoint = heading.mult(amount);
-        endPoint = endPoint.add(moveEndPoint);
-        recalculate();
-    }
-    
-    void shrink(float amount) {
-        /*
-         * Shorten the line by amount
-         */
-        PVector moveEndPoint = heading.mult(amount);
-        endPoint = endPoint.sub(moveEndPoint);
-        recalculate();
+        return abs(PVector.sub(endPoint, startPoint).mag());
     }
     
     void setEndPoint(PVector ep) {
         /*
          * Set the line's end point and recalculate
          */
-        endPoint = ep;
-        recalculate();
+        endPoint = ep.copy();
     }
     
     boolean isVerticle() {
@@ -81,35 +55,10 @@ class Line {
         return startPoint.x == endPoint.x;
     }
     
-    boolean isHeadingDown() {
-        /*
-         * True if the line's heading is in the down direction
-         */
-        return heading.y > 0;
-    }
-    
-    boolean isHeadingUp() {
-        /*
-         * True if the line's heading is in the up direction
-         */
-        return heading.y < 0;
-    }
-    
-    boolean isHeadingLeft() {
-        /*
-         * True if the line's heading is in the left direction
-         */
-        return heading.x > 0;
-    }
-    
-    boolean isHeadingRight() {
-        /*
-         * True if the line's heading is in the right direction
-         */
-        return heading.x < 0;
-    }
-    
     void display() {
+        /*
+         * Draw the line
+         */
         pushMatrix();
         stroke(255);
         strokeWeight(1);
@@ -143,12 +92,62 @@ class ShotLine {
         }
     }
     
-    void display() {
-        line.display();
+    private PVector getHeading() {
+        /*
+         * Get the heading
+         */
+        PVector heading = PVector.sub(line.endPoint, line.startPoint);
+        return heading.normalize();
     }
     
-    PVector getHeading() {
-        return line.heading.copy();
+    void extend(float amount) {
+        /*
+         * Extend the line by amount
+         */
+        PVector heading = getHeading();
+        PVector moveEndPoint = heading.mult(amount);
+        line.setEndPoint(line.endPoint.add(moveEndPoint));
+    }
+    
+    void shrink(float amount) {
+        /*
+         * Shorten the line by amount
+         */
+        PVector heading = getHeading();
+        PVector moveEndPoint = heading.mult(amount);
+        line.setEndPoint(line.endPoint.sub(moveEndPoint));
+    }
+    
+    boolean isHeadingDown() {
+        /*
+         * True if the line's heading is in the down direction
+         */
+        return getHeading().y > 0;
+    }
+    
+    boolean isHeadingUp() {
+        /*
+         * True if the line's heading is in the up direction
+         */
+        return getHeading().y < 0;
+    }
+    
+    boolean isHeadingLeft() {
+        /*
+         * True if the line's heading is in the left direction
+         */
+        return getHeading().x > 0;
+    }
+    
+    boolean isHeadingRight() {
+        /*
+         * True if the line's heading is in the right direction
+         */
+        return getHeading().x < 0;
+    }
+    
+    void display() {
+        line.display();
     }
      
     private PVector linesIntersect(Line l1, Line l2) {
@@ -213,10 +212,10 @@ class ShotLine {
             return false;
         }
                 
-        down = line.isHeadingDown();
-        up = line.isHeadingUp();
-        left = line.isHeadingLeft();
-        right = line.isHeadingRight();
+        down = isHeadingDown();
+        up = isHeadingUp();
+        left = isHeadingLeft();
+        right = isHeadingRight();
 
         if (up) {
             pt = lineIntersectsBlockSide(line, other, BlockSide.BLOCK_BOTTOM);
@@ -257,7 +256,7 @@ class ShotLine {
          */
         PVector collisionPoint = null;
 
-        line.extend((width + height) * 2);  // This will ensure the line's end point is definetely off the screen no matter what
+        extend((width + height) * 2);  // This will ensure the line's end point is definetely off the screen no matter what
 
         // Now we find out where it intersects and set the end point.
         Line[] screenLines = {
@@ -331,7 +330,7 @@ class ShotLines {
             
             PVector heading = prevLine.getHeading();
             
-            if (prevLine.line.endPoint.x == ENGINE.screen.left || prevLine.line.endPoint.x == ENGINE.screen.right || prevLine.line.isHeadingLeft() || prevLine.line.isHeadingRight()) {
+            if (prevLine.line.endPoint.x == ENGINE.screen.left || prevLine.line.endPoint.x == ENGINE.screen.right || prevLine.isHeadingLeft() || prevLine.isHeadingRight()) {
                 heading.x *= -1;
             } else {
                 heading.y *= -1;
