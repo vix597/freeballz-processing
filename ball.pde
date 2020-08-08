@@ -81,19 +81,14 @@ class PickupBall extends WorldObject {
         return middle;
     }
     
-    boolean isBallInObject(Ball ball) {
-        /*
-         * Called to determine if the x,y of the provided 'point'
-         * is inside the bounds of this object. Used for collision
-         * detection.
-         */
-         return isCircleInCircle(ball.location, BALL_RADIUS, this.location, this.radius);
-    }
-    
-    void collide() {
+    void collide(Ball ball) {
         /*
          * Called when a ball collides with this object
          */
+        if (!isCircleInCircle(ball.location, BALL_RADIUS, this.location, this.radius)) {
+            return;
+        }
+         
         ENGINE.world.deletePickupBall(this);
         //
         // TODO - Animate collecting the ball
@@ -281,42 +276,7 @@ class Ball {
             // We're too far aways to even bother checking
             return;
         }
-           
-        if (!other.isBallInObject(this)) {
-            // We're not colliding. Return.
-            return;
-        }
-        
-        if (other.isCollectible()) {
-            // It's collectible so just call its collide method and return.
-            // We don't bounce off collectible items.
-            other.collide();
-            return;
-        }
-       
-        if (location.x >= other.getRight()) {
-            // ball is on the right
-            this.velocity.x *= -1;
-            this.location.x = other.getRight() + BALL_RADIUS;
-        } else if (location.x <= other.getLeft()) {
-            // ball is on the left
-            this.velocity.x *= -1;
-            this.location.x = other.getLeft() - BALL_RADIUS;
-        } else if (location.y >= other.getBottom()) {
-            // ball is under
-            this.velocity.y *= -1;
-            location.y = other.getBottom() + BALL_RADIUS;
-        } else if (location.y <= other.getTop()) {
-            // ball is above
-            this.velocity.y *= -1;
-            location.y = other.getTop() - BALL_RADIUS;
-        } else {
-            // ball is somehow inside the object (maybe moving too fast)
-            velocity.x *= -1;
-            velocity.y *= -1;
-            this.location.sub(this.velocity);  // Undo the last movement
-        }
-        
-        other.collide();
+
+        other.collide(this);
     }
 }

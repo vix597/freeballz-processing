@@ -55,6 +55,14 @@ class Line {
         return startPoint.x == endPoint.x;
     }
     
+    PVector getNormal() {
+        /*
+         * Get the line perpendicular to this one
+         */
+        PVector tangent = new PVector(endPoint.y - startPoint.y, startPoint.x - endPoint.x);
+        return tangent.normalize();
+    }
+    
     void display() {
         /*
          * Draw the line

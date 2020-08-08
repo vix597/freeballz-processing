@@ -75,19 +75,14 @@ class Coin extends WorldObject {
         return middle;
     }
     
-    boolean isBallInObject(Ball ball) {
-        /*
-         * Called to determine if the x,y of the provided 'point'
-         * is inside the bounds of this object. Used for collision
-         * detection.
-         */
-         return isCircleInCircle(ball.location, BALL_RADIUS, this.location, this.radius);
-    }
-    
-    void collide() {
+    void collide(Ball ball) {
         /*
          * Called when a ball collides with this object
          */
+        if (!isCircleInCircle(ball.location, BALL_RADIUS, this.location, this.radius)) {
+            return;
+        }
+         
         ENGINE.world.deleteCoin(this);
     }
 }

@@ -66,9 +66,8 @@ abstract class WorldObject {
     public abstract float getRadius();  // Get the radius of the object.
     public abstract float getWidth();  // Get the width (or diameter) of the object.
     public abstract PVector getMiddle();// Get the middle (x, y) coords of the object.
-    public abstract void collide();  // called when a ball collides with the object.
+    public abstract void collide(Ball ball);  // called to handle collision (checks for collsions and handles it)
     public abstract void display();  // called on each frame to display the object.
-    public abstract boolean isBallInObject(Ball ball);  // called to check if the ball is colliding with the object
 }
 
 
@@ -196,6 +195,27 @@ class World {
          return ENGINE.hud.level;
     }
    
+    void createRandomBlock(float x, float y) {
+        Block block = null;
+        int val = getBlockValue();
+        
+        if (int(random(4)) == 0) {
+            int type = int(random(3));
+            if (type == 0) {
+                block = new TriangleBlock(new PVector(x, y), val, TRIANGLE_TYPE.TOP_LEFT);
+            } else if (type == 1) {
+                block = new TriangleBlock(new PVector(x, y), val, TRIANGLE_TYPE.TOP_RIGHT);
+            } else if (type == 2) {
+                block = new TriangleBlock(new PVector(x, y), val, TRIANGLE_TYPE.BOTTOM_RIGHT);
+            } else {
+                block = new TriangleBlock(new PVector(x, y), val, TRIANGLE_TYPE.BOTTOM_LEFT);
+            }
+        } else {
+            block = new Block(new PVector(x, y), val);
+        }
+        blocks.add(block);  
+    }
+   
     void generateNewRow() {
         /*
          * Generatea new row of blocks
@@ -219,9 +239,7 @@ class World {
                 }
                 x += BLOCK_WIDTH;
             } else {
-                int val = getBlockValue();
-                Block block = new Block(new PVector(x, y), val);
-                blocks.add(block);
+                createRandomBlock(x, y);
                 x += BLOCK_WIDTH;
                 num--;
             }
