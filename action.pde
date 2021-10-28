@@ -203,7 +203,7 @@ class ExecuteShot extends Action {
     void actionActive() {
         int deleteCount = 0;
       
-        if (ENGINE.balls.size() == 0) {
+        if (ENGINE.balls.size() == 0 && ENGINE.dropBalls.size() == 0) {
             println("shot complete");
             // Commit all the collected balls
             ENGINE.hud.numBalls += ENGINE.hud.ballsCollectedThisTurn;
@@ -236,7 +236,6 @@ class ExecuteShot extends Action {
             if (doneCount == 1 && !launchPosUpdated) {
                 // The first ball to land updates
                 // the new launch 'x' position.
-                println("HERE");
                 ENGINE.screen.launchPoint.x = ball.location.x;
                 launchPosUpdated = true;
                 ball.isDelete = true;
@@ -253,6 +252,13 @@ class ExecuteShot extends Action {
             if (i >= launchCount) {
                 prevBall = ball;
                 break;            
+            }
+        }
+        
+        for (Ball ball : ENGINE.dropBalls) {
+            ball.move();
+            if (ball.isDelete) {
+                ENGINE.deleteDropBall(ball);
             }
         }
                  

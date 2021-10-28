@@ -73,12 +73,12 @@ class ShotLines {
         // Set the launch line, used by MainGame
         launchLine = new Line(ENGINE.screen.launchPoint.x, ENGINE.screen.launchPoint.y, mouseX, mouseY);
         
-        Ball ghostBall = new Ball(ENGINE.launchPointBall.location.copy());
+        Ball ghostBall = new Ball(ENGINE.launchPointBall.location.x, ENGINE.launchPointBall.location.y);
         ghostBall.isSimulated = true;  // Won't destroy blocks or pickup items
         PVector velocity = launchLine.getHeading();
         velocity.setMag(SHOT_SPEED);
-        ghostBall.fire();
         ghostBall.setVelocity(velocity);
+        ghostBall.fire();
         for (int i = 0; i < 600; i++) {
             if (ghostBall.bounceCount >= numLines) {
                 break;

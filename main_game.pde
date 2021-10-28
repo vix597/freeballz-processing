@@ -21,11 +21,15 @@ class MainGame {
     public World world;
     
     public ArrayList<Ball> balls;
+    public ArrayList<Ball> dropBalls;
     private ArrayList<Ball> deleteBalls;
+    private ArrayList<Ball> deleteDropBalls;
         
     MainGame() {
         balls = new ArrayList<Ball>();
         deleteBalls = new ArrayList<Ball>();
+        dropBalls = new ArrayList<Ball>();
+        deleteDropBalls = new ArrayList<Ball>();
         action = null;
         
         hud = new Hud();
@@ -39,6 +43,13 @@ class MainGame {
          * Handle deleting a ball
          */
          deleteBalls.add(ball);
+    }
+    
+    void deleteDropBall(Ball ball) {
+        /*
+         * Handle deleting a drop ball
+         */
+         deleteDropBalls.add(ball);
     }
     
     void display() {
@@ -55,9 +66,18 @@ class MainGame {
             balls.remove(ball);
         }
         deleteBalls.clear();
+        for (Ball ball : deleteDropBalls) {
+            dropBalls.remove(ball);
+        }
+        deleteDropBalls.clear();
         
         // Display the balls
         for (Ball ball : balls) {
+            ball.display();
+        }
+        
+        // Display the drop balls
+        for (Ball ball : dropBalls) {
             ball.display();
         }
         

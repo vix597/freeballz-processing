@@ -110,7 +110,18 @@ class PickupBall extends WorldObject {
         
         if (!ball.isSimulated) {
             ENGINE.world.deletePickupBall(this);
+            
+            // When a pickup ball is picked up, spawn a new ball and drop it down
+            // to use as the pickup animation
+            ball = new Ball(location.x, location.y);
+            ball.isSimulated = true;
+            PVector velocity = new PVector(0, 1);  // Down
+            velocity.setMag(SHOT_SPEED);
+            ball.setVelocity(velocity);
+            ball.fire();
+            ENGINE.dropBalls.add(ball);
         }
+        
         return true;
     }
 }
