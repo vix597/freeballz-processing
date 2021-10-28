@@ -75,14 +75,17 @@ class Coin extends WorldObject {
         return middle;
     }
     
-    void collide(Ball ball) {
+    boolean collide(Ball ball) {
         /*
          * Called when a ball collides with this object
          */
         if (!isCircleInCircle(ball.location, BALL_RADIUS, this.location, this.radius)) {
-            return;
+            return false;
         }
          
-        ENGINE.world.deleteCoin(this);
+        if (!ball.isSimulated) {
+            ENGINE.world.deleteCoin(this);
+        }
+        return true;
     }
 }

@@ -8,14 +8,6 @@
  */
 
 
-enum TRIANGLE_TYPE {
-    TOP_LEFT,
-    TOP_RIGHT,
-    BOTTOM_LEFT,
-    BOTTOM_RIGHT
-}
-
-
 class Particle {
     /*
      * Explosion particle class used when a block is destroyed
@@ -151,12 +143,12 @@ class Block extends WorldObject {
         return middle;
     }
     
-    void collide(Ball ball) {
+    boolean collide(Ball ball) {
         /*
          * Called to check for an handle collisions
          */
         if (!isCircleInRect(ball.location, BALL_RADIUS, this.location, this.bWidth, this.bWidth)) {
-            return;  // Not colliding
+            return false;  // Not colliding
         }
         
         if (ball.location.x >= getRight()) {
@@ -182,7 +174,10 @@ class Block extends WorldObject {
             ball.location.sub(ball.velocity);  // Undo the last movement
         }
         
-        handleCollision();
+        if (!ball.isSimulated) {
+            handleCollision();
+        }
+        return true;
     }
     
     protected void handleCollision() {
@@ -274,92 +269,5 @@ class Block extends WorldObject {
         textSize(textSize);
         text(str(remHitPoints), middle.x, middle.y);
         popMatrix();
-    }
-}
-
-
-class TriangleBlock extends Block {
-    /*
-     * A triangular block with hit points, size, and location
-     */
-    private TRIANGLE_TYPE type;
-    
-    
-    TriangleBlock(PVector loc, int points, TRIANGLE_TYPE type) {
-        super(loc, points);
-        this.type = type;
-    }
-
-    void collide(Ball ball) {
-        /*
-         * Called to check for an handle collisions
-         */
-        if (!isCircleInRect(ball.location, BALL_RADIUS, this.location, this.bWidth, this.bWidth)) {
-            return;  // Not colliding
-        }
-        
-        if (ball.location.x >= getRight()) {
-            // ball is on the right
-            ball.velocity.x *= -1;
-            ball.location.x = getRight() + BALL_RADIUS;
-        } else if (ball.location.x <= getLeft()) {
-            // ball is on the left
-            ball.velocity.x *= -1;
-            ball.location.x = getLeft() - BALL_RADIUS;
-        } else if (ball.location.y >= getBottom()) {
-            // ball is under
-            ball.velocity.y *= -1;
-            ball.location.y = getBottom() + BALL_RADIUS;
-        } else if (ball.location.y <= getTop()) {
-            // ball is above
-            ball.velocity.y *= -1;
-            ball.location.y = getTop() - BALL_RADIUS;
-        } else {
-            // ball is somehow inside the object (maybe moving too fast)
-            ball.velocity.x *= -1;
-            ball.velocity.y *= -1;
-            ball.location.sub(ball.velocity);  // Undo the last movement
-        }
-        
-        handleCollision();
-    }
-    
-    protected void drawShape() {
-        /*
-         * Override to draw a triangle instead of a square
-         */        
-        PVector p1, p2, p3;
-        
-        switch (type) {
-        case TOP_LEFT:
-            p1 = new PVector(location.x + spacingX, location.y + spacingY);
-            p2 = new PVector(location.x + bWidth - spacingX, location.y + spacingY);
-            p3 = new PVector(location.x + bWidth - spacingX, location.y + bWidth - spacingY);
-            break;
-        case TOP_RIGHT:
-            p1 = new PVector(location.x + bWidth - spacingX, location.y + spacingY);
-            p2 = new PVector(location.x + bWidth - spacingX, location.y + bWidth - spacingY);
-            p3 = new PVector(location.x + spacingX, location.y + bWidth - spacingY);
-            break;
-        case BOTTOM_LEFT:
-            p1 = new PVector(location.x + spacingX, location.y + bWidth - spacingY);
-            p2 = new PVector(location.x + spacingX, location.y + spacingY);
-            p3 = new PVector(location.x + bWidth - spacingX, location.y + spacingY);
-            break;
-        case BOTTOM_RIGHT:
-            p1 = new PVector(location.x + bWidth - spacingX, location.y + bWidth - spacingY);
-            p2 = new PVector(location.x + spacingX, location.y + bWidth - spacingY);
-            p3 = new PVector(location.x + spacingX, location.y + spacingY);
-            break;
-        default:
-            // This would be a bug
-            println("ERROR - Invalid triangle block type: ", type);
-            p1 = location;
-            p2 = location;
-            p3 = location;
-            break;
-        }
-
-        triangle(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
     }
 }

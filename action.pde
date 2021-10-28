@@ -125,9 +125,9 @@ class PrepareShot extends Action {
         
         // Initialize our handler for shot lines
         if (DEBUG) {
-            shotLines = new ShotLines(100, true);
+            shotLines = new ShotLines(100);
         } else {
-            shotLines = new ShotLines(0, false);
+            shotLines = new ShotLines(3);
         }
     }
     
@@ -156,14 +156,9 @@ class PrepareShot extends Action {
                 resetAction();
                 return;
             }
-            
-            if (shotLines.lines.size() > 0) {  // A quick touch could break this.
-                ENGINE.launchLine = shotLines.lines.get(0);
-                nextState();
-            } else {
-                println("WARNING: Touched too fast. Reset!");
-                resetAction();
-            }
+
+            ENGINE.launchLine = shotLines.launchLine;
+            nextState();
         }
     }
 }
@@ -241,6 +236,7 @@ class ExecuteShot extends Action {
             if (doneCount == 1 && !launchPosUpdated) {
                 // The first ball to land updates
                 // the new launch 'x' position.
+                println("HERE");
                 ENGINE.screen.launchPoint.x = ball.location.x;
                 launchPosUpdated = true;
                 ball.isDelete = true;

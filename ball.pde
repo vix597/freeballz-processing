@@ -100,18 +100,18 @@ class PickupBall extends WorldObject {
         return middle;
     }
     
-    void collide(Ball ball) {
+    boolean collide(Ball ball) {
         /*
          * Called when a ball collides with this object
          */
         if (!isCircleInCircle(ball.location, BALL_RADIUS, this.location, this.radius)) {
-            return;
+            return false;
         }
-         
-        ENGINE.world.deletePickupBall(this);
-        //
-        // TODO - Animate collecting the ball
-        //
+        
+        if (!ball.isSimulated) {
+            ENGINE.world.deletePickupBall(this);
+        }
+        return true;
     }
 }
 
@@ -123,7 +123,9 @@ class Ball {
     public boolean isDelete;
     public boolean isDone;
     public boolean isVisible;
+    public boolean isSimulated;
     public boolean fired;
+    public int bounceCount;
     public float distTraveled;
 
     private color col;
@@ -141,7 +143,9 @@ class Ball {
         isDone = false;
         fired = false;
         isVisible = true;
+        isSimulated = false;
         distTraveled = 0;
+        bounceCount = 0;
         col = color(255);
     }
     
@@ -253,6 +257,7 @@ class Ball {
             velocity.x = BALL_RADIUS;
             location.add(velocity);
         } else {
+            println("HERE also");
             location.x = ENGINE.screen.launchPoint.x;
         }
     }
@@ -268,17 +273,21 @@ class Ball {
         if (location.x > ENGINE.screen.right - BALL_RADIUS) {
           location.x = ENGINE.screen.right - BALL_RADIUS;
           velocity.x *= -1;
+          bounceCount++;
         } else if (location.x < BALL_RADIUS) {
           location.x = BALL_RADIUS;
           velocity.x *= -1;
+          bounceCount++;
         } else if (location.y > ENGINE.screen.bottom - BALL_RADIUS) {
           isDone = true;
           velocity.y = 0;
           velocity.x = 0;
           location.y = ENGINE.screen.launchPoint.y;
+          bounceCount++;
         } else if (location.y < ENGINE.screen.top + BALL_RADIUS) {
           location.y = ENGINE.screen.top + BALL_RADIUS;
           velocity.y *= -1;
+          bounceCount++;
         }
     }
     
@@ -296,6 +305,8 @@ class Ball {
             return;
         }
 
-        other.collide(this);
+        if (other.collide(this) && !other.collectible) {
+            bounceCount++;
+        }
     }
 }
