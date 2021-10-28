@@ -100,6 +100,8 @@ float getDisplayDensity() {
 boolean isCircleInRect(PVector cLocation, float radius, PVector rLocation, float w, float h) {
     /*
      * Determine if the circle is overlapping the rect
+     *
+     * Taken/Modified from: http://jeffreythompson.org/collision-detection/
      */
     float distance;
     float testX = cLocation.x;
@@ -131,6 +133,135 @@ boolean isCircleInRect(PVector cLocation, float radius, PVector rLocation, float
 boolean isCircleInCircle(PVector locationOne, float radiusOne, PVector locationTwo, float radiusTwo) {
     /*
      * Determine if the circles are overlapping
+     *
+     * Taken/Modified from: http://jeffreythompson.org/collision-detection/
      */
     return dist(locationOne.x, locationOne.y, locationTwo.x, locationTwo.y) < (radiusOne + radiusTwo);
+}
+
+
+PVector getLineIntersectPointWithRectLeft(float x1, float y1, float x2, float y2, float rx, float ry, float rw, float rh) {
+    /*
+     * Calculate and return the points at which a line intersects a rect's left side.
+     * This method will return null if the line doesn't intersect the rect.
+     *
+     * Taken/Modified from: http://jeffreythompson.org/collision-detection/
+     */
+    
+    // check if the line has hit any of the rectangle's sides
+    // uses the getLineInterectPoint method below
+    PVector left = getLineInterectPoint(x1,y1,x2,y2, rx,ry,rx, ry+rh);
+    
+    if (left != null) {
+        return left;
+    }
+    
+    return null;
+}
+
+
+PVector getLineIntersectPointWithRectRight(float x1, float y1, float x2, float y2, float rx, float ry, float rw, float rh) {
+    /*
+     * Calculate and return the points at which a line intersects a rect's right side.
+     * This method will return null if the line doesn't intersect the rect.
+     *
+     * Taken/Modified from: http://jeffreythompson.org/collision-detection/
+     */
+    
+    // check if the line has hit any of the rectangle's sides
+    // uses the getLineInterectPoint method below
+    PVector right = getLineInterectPoint(x1,y1,x2,y2, rx+rw,ry, rx+rw,ry+rh);
+    
+    if (right != null) {
+        return right;
+    }
+    
+    return null;
+}
+
+
+PVector getLineIntersectPointWithRectTop(float x1, float y1, float x2, float y2, float rx, float ry, float rw, float rh) {
+    /*
+     * Calculate and return the points at which a line intersects a rect's top side.
+     * This method will return null if the line doesn't intersect the rect.
+     *
+     * Taken/Modified from: http://jeffreythompson.org/collision-detection/
+     */
+    
+    // check if the line has hit any of the rectangle's sides
+    // uses the getLineInterectPoint method below
+    PVector top = getLineInterectPoint(x1,y1,x2,y2, rx,ry, rx+rw,ry);
+    
+    if (top != null) {
+        return top;
+    }
+    
+    return null;
+}
+
+
+PVector getLineIntersectPointWithRectBottom(float x1, float y1, float x2, float y2, float rx, float ry, float rw, float rh) {
+    /*
+     * Calculate and return the points at which a line intersects a rect's bottom side.
+     * This method will return null if the line doesn't intersect the rect.
+     *
+     * Taken/Modified from: http://jeffreythompson.org/collision-detection/
+     */
+    
+    // check if the line has hit any of the rectangle's sides
+    // uses the getLineInterectPoint method below
+    PVector bottom = getLineInterectPoint(x1,y1,x2,y2, rx,ry+rh, rx+rw,ry+rh);
+    
+    if (bottom != null) {
+        return bottom;
+    }
+    
+    return null;
+}
+
+
+boolean lineIntersectsRect(float x1, float y1, float x2, float y2, float rx, float ry, float rw, float rh) {
+    /*
+     * Determine if a line intersects a rect.
+     *
+     * Taken/Modified from: http://jeffreythompson.org/collision-detection/
+     */
+    
+    // check if the line has hit any of the rectangle's sides
+    // uses the Line/Line function below
+    PVector left = getLineInterectPoint(x1,y1,x2,y2, rx,ry,rx, ry+rh);
+    PVector right = getLineInterectPoint(x1,y1,x2,y2, rx+rw,ry, rx+rw,ry+rh);
+    PVector top = getLineInterectPoint(x1,y1,x2,y2, rx,ry, rx+rw,ry);
+    PVector bottom = getLineInterectPoint(x1,y1,x2,y2, rx,ry+rh, rx+rw,ry+rh);
+
+    // if ANY of the above are true, the line
+    // has hit the rectangle
+    if (left != null || right != null  || top != null  || bottom != null) {
+        return true;
+    }
+    return false;
+}
+
+
+PVector getLineInterectPoint(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
+    /*
+     * Calculate and return the point at which 2 lines intersect.
+     * This method will return null if they do not intersect
+     *
+     * Taken/Modified from: http://jeffreythompson.org/collision-detection/
+     */
+    
+    // calculate the distance to intersection point
+    float uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+    float uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+
+    // if uA and uB are between 0-1, lines are colliding
+    if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
+        
+        // optionally, draw a circle where the lines meet
+        float intersectionX = x1 + (uA * (x2-x1));
+        float intersectionY = y1 + (uA * (y2-y1));
+        return new PVector(intersectionX, intersectionY);
+    }
+    return null;
 }

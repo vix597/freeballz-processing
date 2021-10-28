@@ -12,7 +12,11 @@ class PickupBall extends WorldObject {
     /*
      * A new ball that can be collected
      */
-     
+    
+    private float minRingRadius = 1.5;  // The min radius multiplier for the PICKUP_BALL_RADIUS
+    private float maxRingRadius = 2.0;  // This is the max multiplier for the PICKUP_BALL_RADIUS
+    private float pulseSpeed = 0.02;    // The speed the outer ring pulses at
+    
     private float left;          // x value of left side of ball (same as location.x - radius)
     private float right;         // x value of right side of block (same as location.x + radius)
     private float top;           // y position of top of block (same as location.y - radius)
@@ -20,6 +24,8 @@ class PickupBall extends WorldObject {
     private float radius;        // the distance from the middle to the edge of the circle
     private PVector middle;      // x, y coords of the middle of the ball (same as location)
     private float bWidth;        // diameter of the ball
+    private float ringRadius;    // The current outer ring radius
+    private int animDirection;   // Positive, pulse ring out. Negative, pulse ring in.
     
     PickupBall(float x, float y) {
         super(x, y, true, ObjectType.PICKUP_BALL);
@@ -30,6 +36,7 @@ class PickupBall extends WorldObject {
         top = location.y - radius;
         bottom = location.y + radius;
         middle = location;  // Same thing just store ref
+        ringRadius = maxRingRadius;
     }
     
     void slide(float amount) {
@@ -43,14 +50,26 @@ class PickupBall extends WorldObject {
         
         noStroke();
         fill(255);
-        ellipse(location.x, location.y, (BALL_RADIUS * 2), (BALL_RADIUS * 2));
+        ellipse(location.x, location.y, PICKUP_BALL_RADIUS, PICKUP_BALL_RADIUS);
         
         strokeWeight(5);
         stroke(255);
         noFill();
-        ellipse(location.x, location.y, bWidth, bWidth);
+        ellipse(location.x, location.y, PICKUP_BALL_RADIUS * ringRadius, PICKUP_BALL_RADIUS * ringRadius);
         
         popMatrix();
+        
+        //
+        // Update for pulse animation
+        //
+        ringRadius += (pulseSpeed * animDirection);
+        if (ringRadius >= maxRingRadius) {
+            animDirection = -1;
+            ringRadius = maxRingRadius;
+        } else if (ringRadius <= minRingRadius) {
+            animDirection = 1;
+            ringRadius = minRingRadius;
+        }        
     }
     
     float getLeft() {
@@ -81,23 +100,18 @@ class PickupBall extends WorldObject {
         return middle;
     }
     
-    boolean isBallInObject(Ball ball) {
-        /*
-         * Called to determine if the x,y of the provided 'point'
-         * is inside the bounds of this object. Used for collision
-         * detection.
-         */
-         return isCircleInCircle(ball.location, BALL_RADIUS, this.location, this.radius);
-    }
-    
-    void collide() {
+    boolean collide(Ball ball) {
         /*
          * Called when a ball collides with this object
          */
-        ENGINE.world.deletePickupBall(this);
-        //
-        // TODO - Animate collecting the ball
-        //
+        if (!isCircleInCircle(ball.location, BALL_RADIUS, this.location, this.radius)) {
+            return false;
+        }
+        
+        if (!ball.isSimulated) {
+            ENGINE.world.deletePickupBall(this);
+        }
+        return true;
     }
 }
 
@@ -109,7 +123,9 @@ class Ball {
     public boolean isDelete;
     public boolean isDone;
     public boolean isVisible;
+    public boolean isSimulated;
     public boolean fired;
+    public int bounceCount;
     public float distTraveled;
 
     private color col;
@@ -127,7 +143,9 @@ class Ball {
         isDone = false;
         fired = false;
         isVisible = true;
+        isSimulated = false;
         distTraveled = 0;
+        bounceCount = 0;
         col = color(255);
     }
     
@@ -239,6 +257,7 @@ class Ball {
             velocity.x = BALL_RADIUS;
             location.add(velocity);
         } else {
+            println("HERE also");
             location.x = ENGINE.screen.launchPoint.x;
         }
     }
@@ -254,17 +273,21 @@ class Ball {
         if (location.x > ENGINE.screen.right - BALL_RADIUS) {
           location.x = ENGINE.screen.right - BALL_RADIUS;
           velocity.x *= -1;
+          bounceCount++;
         } else if (location.x < BALL_RADIUS) {
           location.x = BALL_RADIUS;
           velocity.x *= -1;
+          bounceCount++;
         } else if (location.y > ENGINE.screen.bottom - BALL_RADIUS) {
           isDone = true;
           velocity.y = 0;
           velocity.x = 0;
           location.y = ENGINE.screen.launchPoint.y;
+          bounceCount++;
         } else if (location.y < ENGINE.screen.top + BALL_RADIUS) {
           location.y = ENGINE.screen.top + BALL_RADIUS;
           velocity.y *= -1;
+          bounceCount++;
         }
     }
     
@@ -281,42 +304,9 @@ class Ball {
             // We're too far aways to even bother checking
             return;
         }
-           
-        if (!other.isBallInObject(this)) {
-            // We're not colliding. Return.
-            return;
+
+        if (other.collide(this) && !other.collectible) {
+            bounceCount++;
         }
-        
-        if (other.isCollectible()) {
-            // It's collectible so just call its collide method and return.
-            // We don't bounce off collectible items.
-            other.collide();
-            return;
-        }
-       
-        if (location.x >= other.getRight()) {
-            // ball is on the right
-            this.velocity.x *= -1;
-            this.location.x = other.getRight() + BALL_RADIUS;
-        } else if (location.x <= other.getLeft()) {
-            // ball is on the left
-            this.velocity.x *= -1;
-            this.location.x = other.getLeft() - BALL_RADIUS;
-        } else if (location.y >= other.getBottom()) {
-            // ball is under
-            this.velocity.y *= -1;
-            location.y = other.getBottom() + BALL_RADIUS;
-        } else if (location.y <= other.getTop()) {
-            // ball is above
-            this.velocity.y *= -1;
-            location.y = other.getTop() - BALL_RADIUS;
-        } else {
-            // ball is somehow inside the object (maybe moving too fast)
-            velocity.x *= -1;
-            velocity.y *= -1;
-            this.location.sub(this.velocity);  // Undo the last movement
-        }
-        
-        other.collide();
     }
 }

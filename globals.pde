@@ -8,7 +8,7 @@
  */
 
 int TIME = 0;
-boolean DEBUG = true;  // Displays cheat lines and other useful info
+boolean DEBUG = false;  // Displays cheat lines and other useful info
 
 enum GameState {
     START_SCREEN,
@@ -19,6 +19,13 @@ enum InputType {
     TOUCH_START,
     TOUCH_END,
     TOUCH_MOVE
+}
+
+enum BlockSide {
+    BLOCK_LEFT,
+    BLOCK_RIGHT,
+    BLOCK_TOP,
+    BLOCK_BOTTOM
 }
 
 GameState currentState = GameState.START_SCREEN;

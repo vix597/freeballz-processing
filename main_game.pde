@@ -17,7 +17,7 @@ class MainGame {
     public Action action;
     public GameScreen screen;
     public Ball launchPointBall;
-    public ShotLine launchLine;
+    public Line launchLine;
     public World world;
     
     public ArrayList<Ball> balls;

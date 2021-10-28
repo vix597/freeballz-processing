@@ -66,9 +66,8 @@ abstract class WorldObject {
     public abstract float getRadius();  // Get the radius of the object.
     public abstract float getWidth();  // Get the width (or diameter) of the object.
     public abstract PVector getMiddle();// Get the middle (x, y) coords of the object.
-    public abstract void collide();  // called when a ball collides with the object.
+    public abstract boolean collide(Ball ball);  // called to handle collision (checks for collsions and handles it)
     public abstract void display();  // called on each frame to display the object.
-    public abstract boolean isBallInObject(Ball ball);  // called to check if the ball is colliding with the object
 }
 
 
@@ -196,6 +195,16 @@ class World {
          return ENGINE.hud.level;
     }
    
+    void createBlock(float x, float y) {
+        /*
+         * Create a block with random value
+         */
+        Block block = null;
+        int val = getBlockValue();
+        block = new Block(new PVector(x, y), val);
+        blocks.add(block);  
+    }
+   
     void generateNewRow() {
         /*
          * Generatea new row of blocks
@@ -219,9 +228,7 @@ class World {
                 }
                 x += BLOCK_WIDTH;
             } else {
-                int val = getBlockValue();
-                Block block = new Block(new PVector(x, y), val);
-                blocks.add(block);
+                createBlock(x, y);
                 x += BLOCK_WIDTH;
                 num--;
             }

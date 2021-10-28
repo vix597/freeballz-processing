@@ -54,13 +54,13 @@ class Block extends WorldObject {
     public float spacingX;      // Number of pixels to use as spacing to the left and right of the block
     public float spacingY;      // Number of pixels to use as spacing above and below the block
 
-    private float left;          // x value of left side of block (same as location.x)
-    private float right;         // x value of right side of block (same as location.x + bWidth)
-    private float top;           // y position of top of block (same as location.y)
-    private float bottom;        // y position of bottom of block (same as location.y + bWidth)
-    private float radius;        // the distance from the middle to a corner
-    private PVector middle;      // x, y coords of the middle of the block
-    private float bWidth;        // Width and height of block (it's a square)
+    protected float left;          // x value of left side of block (same as location.x)
+    protected float right;         // x value of right side of block (same as location.x + bWidth)
+    protected float top;           // y position of top of block (same as location.y)
+    protected float bottom;        // y position of bottom of block (same as location.y + bWidth)
+    protected float radius;        // the distance from the middle to a corner
+    protected PVector middle;      // x, y coords of the middle of the block
+    protected float bWidth;        // Width and height of block (it's a square)
 
     private int explodeFrames;                     // Number of frames required for explosion
     private int explodeFrameCount;                 // Number of frames executed so far in explode animation
@@ -143,9 +143,47 @@ class Block extends WorldObject {
         return middle;
     }
     
-    void collide() {
+    boolean collide(Ball ball) {
         /*
-         * Called when a ball collides with the block
+         * Called to check for an handle collisions
+         */
+        if (!isCircleInRect(ball.location, BALL_RADIUS, this.location, this.bWidth, this.bWidth)) {
+            return false;  // Not colliding
+        }
+        
+        if (ball.location.x >= getRight()) {
+            // ball is on the right
+            ball.velocity.x *= -1;
+            ball.location.x = getRight() + BALL_RADIUS;
+        } else if (ball.location.x <= getLeft()) {
+            // ball is on the left
+            ball.velocity.x *= -1;
+            ball.location.x = getLeft() - BALL_RADIUS;
+        } else if (ball.location.y >= getBottom()) {
+            // ball is under
+            ball.velocity.y *= -1;
+            ball.location.y = getBottom() + BALL_RADIUS;
+        } else if (ball.location.y <= getTop()) {
+            // ball is above
+            ball.velocity.y *= -1;
+            ball.location.y = getTop() - BALL_RADIUS;
+        } else {
+            // ball is somehow inside the object (maybe moving too fast)
+            ball.velocity.x *= -1;
+            ball.velocity.y *= -1;
+            ball.location.sub(ball.velocity);  // Undo the last movement
+        }
+        
+        if (!ball.isSimulated) {
+            handleCollision();
+        }
+        return true;
+    }
+    
+    protected void handleCollision() {
+        /*
+         * Called from collide() if a collision occurs to decrement point
+         * values and update the block's color
          */
         remHitPoints--;
         if (remHitPoints == 0) {
@@ -156,15 +194,6 @@ class Block extends WorldObject {
             }
             colorMode(RGB, 255, 255, 255);
         }
-    }
-    
-    boolean isBallInObject(Ball ball) {
-        /*
-         * Called to determine if the x,y of the provided 'point'
-         * is inside the bounds of this object. Used for collision
-         * detection.
-         */
-        return isCircleInRect(ball.location, BALL_RADIUS, this.location, this.bWidth, this.bWidth);
     }
     
     private void explode() {
@@ -202,13 +231,18 @@ class Block extends WorldObject {
         colorMode(HSB, maxHSB, maxHSB, 100);
         fill(getColor());
         colorMode(RGB, 255, 255, 255);
-        
+        drawShape();
+        popMatrix();
+    }
+    
+    protected void drawShape() {
+        /*
+         * Method that can be overriden. Used to draw the actual shape
+         */
         // We want to display the block in the middle of the hit box
         // and a little smaller so that it looks like there are gaps
         // between blocks.
         rect(location.x + spacingX, location.y + spacingY, bWidth - spacingX, bWidth - spacingY, BLOCK_RADIUS);
-
-        popMatrix();
     }
     
     private void displayText() {
