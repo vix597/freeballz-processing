@@ -6,18 +6,15 @@
  * Created on: January 12, 2020
  *     Author: Sean LaPlante
  */
- 
- 
+
+
 class Line {
     /*
      * Handles holding information needed for a line
      */
-    
     public PVector startPoint;
     public PVector endPoint;
-    public PVector heading;
-    public float len;
-    
+
     Line(float startX, float startY, float endX, float endY) {
         /*
          * Create a line from 4 points. The PVector objects are created
@@ -25,9 +22,8 @@ class Line {
          */
         startPoint = new PVector(startX, startY);
         endPoint = new PVector(endX, endY);
-        recalculate();
     }
-    
+
     Line(PVector start, PVector end) {
         /*
          * Creates a line using 2 PVectors as reference.
@@ -37,78 +33,40 @@ class Line {
         startPoint = start;
         endPoint = end;
     }
-    
-    private void recalculate() {
+
+    float getLength() {
         /*
-         * Redo length/heading math
+         * Get the length of the line
          */
-        heading = PVector.sub(endPoint, startPoint);
-        len = heading.mag();
-        heading = heading.normalize();  // We pull the length of the line from heading, now normalize it to 1
+        return abs(PVector.sub(endPoint, startPoint).mag());
     }
-    
-    void extend(float amount) {
-        /*
-         * Extend the line by amount
-         */
-        PVector moveEndPoint = heading.mult(amount);
-        endPoint = endPoint.add(moveEndPoint);
-        recalculate();
-    }
-    
-    void shrink(float amount) {
-        /*
-         * Shorten the line by amount
-         */
-        PVector moveEndPoint = heading.mult(amount);
-        endPoint = endPoint.sub(moveEndPoint);
-        recalculate();
-    }
-    
+
     void setEndPoint(PVector ep) {
         /*
          * Set the line's end point and recalculate
          */
-        endPoint = ep;
-        recalculate();
+        endPoint = ep.copy();
     }
-    
+
     boolean isVerticle() {
         /*
          * Return true if the line is straight up and down, false otherwise
          */
         return startPoint.x == endPoint.x;
     }
-    
-    boolean isHeadingDown() {
+
+    PVector getNormal() {
         /*
-         * True if the line's heading is in the down direction
+         * Get the line perpendicular to this one
          */
-        return heading.y > 0;
+        PVector tangent = new PVector(endPoint.y - startPoint.y, startPoint.x - endPoint.x);
+        return tangent.normalize();
     }
-    
-    boolean isHeadingUp() {
-        /*
-         * True if the line's heading is in the up direction
-         */
-        return heading.y < 0;
-    }
-    
-    boolean isHeadingLeft() {
-        /*
-         * True if the line's heading is in the left direction
-         */
-        return heading.x > 0;
-    }
-    
-    boolean isHeadingRight() {
-        /*
-         * True if the line's heading is in the right direction
-         */
-        return heading.x < 0;
-    }
-    
+
     void display() {
+        /*
+         * Draw the line
+         */
         pushMatrix();
         stroke(255);
         strokeWeight(1);
@@ -116,7 +74,7 @@ class Line {
         popMatrix();
     }
 }
- 
+
 
 class ShotLine {
     /*
@@ -124,13 +82,13 @@ class ShotLine {
      * and maintains a direction with vectors.
      */
     public Line line;
-     
+
     ShotLine(float startX, float startY, float endX, float endY, boolean enableCollision) {
         line = new Line(startX, startY, endX, endY);
-        
+
         if (enableCollision) {
             extendLineToScreenBoundary();  // Recalulates endPoint appropriately
-            
+
             // If we're enabling collisions, check for them and update the end point
             for (Block block : ENGINE.world.blocks) {
                 if (!block.isDelete) {
@@ -141,15 +99,65 @@ class ShotLine {
             }
         }
     }
-    
+
+    private PVector getHeading() {
+        /*
+         * Get the heading
+         */
+        PVector heading = PVector.sub(line.endPoint, line.startPoint);
+        return heading.normalize();
+    }
+
+    void extend(float amount) {
+        /*
+         * Extend the line by amount
+         */
+        PVector heading = getHeading();
+        PVector moveEndPoint = heading.mult(amount);
+        line.setEndPoint(line.endPoint.add(moveEndPoint));
+    }
+
+    void shrink(float amount) {
+        /*
+         * Shorten the line by amount
+         */
+        PVector heading = getHeading();
+        PVector moveEndPoint = heading.mult(amount);
+        line.setEndPoint(line.endPoint.sub(moveEndPoint));
+    }
+
+    boolean isHeadingDown() {
+        /*
+         * True if the line's heading is in the down direction
+         */
+        return getHeading().y > 0;
+    }
+
+    boolean isHeadingUp() {
+        /*
+         * True if the line's heading is in the up direction
+         */
+        return getHeading().y < 0;
+    }
+
+    boolean isHeadingLeft() {
+        /*
+         * True if the line's heading is in the left direction
+         */
+        return getHeading().x > 0;
+    }
+
+    boolean isHeadingRight() {
+        /*
+         * True if the line's heading is in the right direction
+         */
+        return getHeading().x < 0;
+    }
+
     void display() {
         line.display();
     }
-    
-    PVector getHeading() {
-        return line.heading.copy();
-    }
-     
+
     private PVector linesIntersect(Line l1, Line l2) {
         /*
          * Check if line l1 intersects with line l2 and returns the first intersection PVector
@@ -165,7 +173,7 @@ class ShotLine {
 
         return getLineInterectPoint(x1, y1, x2, y2, x3, y3, x4, y4);
     }
-    
+
     private boolean lineIntersectsBlock(Line line, Block block) {
         /*
          * Wraps call to getLineIntersectPointWithRect
@@ -176,7 +184,7 @@ class ShotLine {
             block.bWidth, block.bWidth
         );
     }
-    
+
     private PVector lineIntersectsBlockSide(Line line, Block block, BlockSide side) {
         float x1 = line.startPoint.x;
         float x2 = line.endPoint.x;
@@ -185,7 +193,7 @@ class ShotLine {
         float rx = block.location.x;
         float ry = block.location.y;
         float rw = block.bWidth;  // It's a square, don't need height.
-        
+
         switch (side) {
         case BLOCK_LEFT:
             return getLineIntersectPointWithRectLeft(x1, y1, x2, y2, rx, ry, rw, rw);
@@ -199,7 +207,7 @@ class ShotLine {
             return null;
         }
     }
-    
+
     private boolean checkCollision(Block other) {
         //
         // Get the 4 lines that make up the rect. Returns true on collision
@@ -207,15 +215,15 @@ class ShotLine {
         //
         PVector pt = null;
         boolean left = false, right = false, up = false, down = false;
-   
+
         if (!lineIntersectsBlock(line, other)) {
             return false;
         }
-                
-        down = line.isHeadingDown();
-        up = line.isHeadingUp();
-        left = line.isHeadingLeft();
-        right = line.isHeadingRight();
+
+        down = isHeadingDown();
+        up = isHeadingUp();
+        left = isHeadingLeft();
+        right = isHeadingRight();
 
         if (up) {
             pt = lineIntersectsBlockSide(line, other, BlockSide.BLOCK_BOTTOM);
@@ -230,7 +238,7 @@ class ShotLine {
         }
         if (down) {
             pt = lineIntersectsBlockSide(line, other, BlockSide.BLOCK_TOP);
-            
+
             if (pt == null) {
                 if (left) {
                     pt = lineIntersectsBlockSide(line, other, BlockSide.BLOCK_RIGHT);
@@ -240,23 +248,23 @@ class ShotLine {
                 }
             }
         }
-        
+
         if (pt == null) {
             return false;
         }
-        
+
         line.setEndPoint(pt);
         return true;
     }
 
     private void extendLineToScreenBoundary() {
-        /* 
+        /*
          * Draw a line extended to the edge of the
          * screen based on a start and end point.
          */
         PVector collisionPoint = null;
 
-        line.extend((width + height) * 2);  // This will ensure the line's end point is definetely off the screen no matter what
+        extend((width + height) * 2);  // This will ensure the line's end point is definetely off the screen no matter what
 
         // Now we find out where it intersects and set the end point.
         Line[] screenLines = {
@@ -265,7 +273,7 @@ class ShotLine {
             new Line(ENGINE.screen.left, ENGINE.screen.top - 10, ENGINE.screen.left, ENGINE.screen.bottom + 10),
             new Line(ENGINE.screen.right, ENGINE.screen.top - 10, ENGINE.screen.right, ENGINE.screen.bottom + 10)
         };
-        
+
         // It can only be colliding with one
         for (Line screenLine : screenLines) {
             collisionPoint = linesIntersect(line, screenLine);
@@ -282,25 +290,25 @@ class ShotLines {
     /*
      * Manages the shot lines for the game
      */
-     
+
     public ArrayList<ShotLine> lines;
     private int numLines;
     private boolean enableCollision;
-     
+
     ShotLines(int n, boolean c) {
         lines = new ArrayList<ShotLine>(n);
         numLines = n;
         enableCollision = c;
     }
-    
+
     void display() {
         getShotLines();
-        
+
         for (ShotLine line : lines) {
             line.display();
         }
     }
-    
+
     private void getShotLines() {
         /*
          * Draw the shot lines. num_lines determines
@@ -308,7 +316,7 @@ class ShotLines {
          * first. Returns the lines to be drawn.
          */
         lines.clear();  // This is called in display, so clear on each call.
-         
+
         ShotLine prevLine = new ShotLine(
             ENGINE.screen.launchPoint.x,
             ENGINE.screen.launchPoint.y,
@@ -316,33 +324,33 @@ class ShotLines {
             mouseY,
             enableCollision
         );
-            
+
         lines.add(prevLine);  // We always get at least 1 line.
-    
+
         for (int i = 0; i < numLines; i++) {
             if (prevLine.line.endPoint.y == ENGINE.screen.bottom) {
                 break;  // Balls end at the bottom of the screen
             }
-            
+
             if (prevLine.line.isVerticle()) {
                 break;  // Don't bother if the line is verticle
             }
-            
+
             PVector heading = prevLine.getHeading();
-            
-            if (prevLine.line.endPoint.x == ENGINE.screen.left || prevLine.line.endPoint.x == ENGINE.screen.right || prevLine.line.isHeadingLeft() || prevLine.line.isHeadingRight()) {
+
+            if (prevLine.line.endPoint.x == ENGINE.screen.left || prevLine.line.endPoint.x == ENGINE.screen.right || prevLine.isHeadingLeft() || prevLine.isHeadingRight()) {
                 heading.x *= -1;
             } else {
                 heading.y *= -1;
             }
-            
+
             PVector endPoint = PVector.add(prevLine.line.endPoint, heading);
-            
+
             prevLine = new ShotLine(prevLine.line.endPoint.x, prevLine.line.endPoint.y, endPoint.x, endPoint.y, enableCollision);
             lines.add(prevLine);
         }
     }
 }
 
-    
-    
+
+
