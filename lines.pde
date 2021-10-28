@@ -42,7 +42,6 @@ class Line {
         /*
          * Redo length/heading math
          */
-        println(endPoint, ",", startPoint);
         heading = PVector.sub(endPoint, startPoint);
         len = heading.mag();
         heading = heading.normalize();  // We pull the length of the line from heading, now normalize it to 1

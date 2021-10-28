@@ -12,7 +12,11 @@ class PickupBall extends WorldObject {
     /*
      * A new ball that can be collected
      */
-     
+    
+    private float minRingRadius = 1.5;  // The min radius multiplier for the PICKUP_BALL_RADIUS
+    private float maxRingRadius = 2.0;  // This is the max multiplier for the PICKUP_BALL_RADIUS
+    private float pulseSpeed = 0.02;    // The speed the outer ring pulses at
+    
     private float left;          // x value of left side of ball (same as location.x - radius)
     private float right;         // x value of right side of block (same as location.x + radius)
     private float top;           // y position of top of block (same as location.y - radius)
@@ -20,6 +24,8 @@ class PickupBall extends WorldObject {
     private float radius;        // the distance from the middle to the edge of the circle
     private PVector middle;      // x, y coords of the middle of the ball (same as location)
     private float bWidth;        // diameter of the ball
+    private float ringRadius;    // The current outer ring radius
+    private int animDirection;   // Positive, pulse ring out. Negative, pulse ring in.
     
     PickupBall(float x, float y) {
         super(x, y, true, ObjectType.PICKUP_BALL);
@@ -30,6 +36,7 @@ class PickupBall extends WorldObject {
         top = location.y - radius;
         bottom = location.y + radius;
         middle = location;  // Same thing just store ref
+        ringRadius = maxRingRadius;
     }
     
     void slide(float amount) {
@@ -43,14 +50,26 @@ class PickupBall extends WorldObject {
         
         noStroke();
         fill(255);
-        ellipse(location.x, location.y, (BALL_RADIUS * 2), (BALL_RADIUS * 2));
+        ellipse(location.x, location.y, PICKUP_BALL_RADIUS, PICKUP_BALL_RADIUS);
         
         strokeWeight(5);
         stroke(255);
         noFill();
-        ellipse(location.x, location.y, bWidth, bWidth);
+        ellipse(location.x, location.y, PICKUP_BALL_RADIUS * ringRadius, PICKUP_BALL_RADIUS * ringRadius);
         
         popMatrix();
+        
+        //
+        // Update for pulse animation
+        //
+        ringRadius += (pulseSpeed * animDirection);
+        if (ringRadius >= maxRingRadius) {
+            animDirection = -1;
+            ringRadius = maxRingRadius;
+        } else if (ringRadius <= minRingRadius) {
+            animDirection = 1;
+            ringRadius = minRingRadius;
+        }        
     }
     
     float getLeft() {
